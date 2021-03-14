@@ -68,7 +68,7 @@ const ChatMain = ({ navigation, auth }) => {
         text: `Hi! Let's chat!`,
         createdAt: firestore.FieldValue.serverTimestamp(),
         user: {
-          _id: friendId,
+          _id: auth,
           avatar: 'https://placeimg.com/140/140/any',
           name: auth
         }
@@ -78,7 +78,7 @@ const ChatMain = ({ navigation, auth }) => {
     })
     .catch(console.error);
 
-    // update my firned list
+    // update my friend list
     await firestore()
     .doc(`users/${auth}`)
     .update({
