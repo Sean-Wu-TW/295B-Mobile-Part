@@ -39,7 +39,7 @@ const Messages = [
 
 const MessagesScreen = ({navigation, auth}) => {
   const [inbox, setInbox] = useState([]);
-  // TODO: extract the chats, and replace the dummy mesage list
+
   const fetchUserInfo = async () => {
     firestore()
     .collection('users')
@@ -47,7 +47,7 @@ const MessagesScreen = ({navigation, auth}) => {
     .collection('chat')
     .get()
     .then(snapshot => {
-      let toAppend = []
+      let toAppend = [];
       snapshot.forEach(doc => {
         // extract the document ids in the chat collection
         // const data = doc.data(); -> returns {}, no data found

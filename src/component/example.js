@@ -77,7 +77,7 @@ const Example = ({ navigation, route}) => {
     .collection('messages')
     .add({
       text: msg[0].text,
-      createdAt: new Date(),
+      createdAt: firestore.FieldValue.serverTimestamp(),
       user: {
         _id: whoami,
         avatar: 'https://placeimg.com/140/140/any',
@@ -94,7 +94,7 @@ const Example = ({ navigation, route}) => {
     .collection('messages')
     .add({
       text: msg[0].text,
-      createdAt: new Date(),
+      createdAt: firestore.FieldValue.serverTimestamp(),
       user: {
         _id: whoami,
         avatar: 'https://placeimg.com/140/140/any',
