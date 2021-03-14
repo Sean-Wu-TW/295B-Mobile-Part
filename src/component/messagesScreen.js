@@ -14,6 +14,7 @@ import {
 } from '../styles/messageStyles';
 import firestore from '@react-native-firebase/firestore';
 import UUIDGenerator from 'react-native-uuid-generator';
+import utils from '../util';
 
 
 const messages = [
@@ -25,14 +26,6 @@ const messages = [
     messageTime: '4 mins ago',
     messageText:
       'Hey there, this is my test for a post of my social app in React Native.',
-  }
-];
-
-const Messages = [
-  {
-    id: '1',
-    userid: 'johnid',
-    userName: 'john',
   }
 ];
 
@@ -51,11 +44,12 @@ const MessagesScreen = ({navigation, auth}) => {
       snapshot.forEach(doc => {
         // extract the document ids in the chat collection
         // const data = doc.data(); -> returns {}, no data found
-        console.log(doc.id);
+        // console.log("friend: ", doc.get('lastChat').toDate().toDateString());
         toAppend.push({    
           id: doc.id,
           userid: doc.id,
-          userName: doc.id
+          userName: doc.id,
+          messageTime: doc.get('lastChat')?.toDate().toDateString(),
         });
       });
       setInbox(toAppend);

@@ -85,6 +85,7 @@ const Example = ({ navigation, route}) => {
       }
     })
     .catch(console.error);
+
     // update chat history of other person
     firestore()
     .collection('users')
@@ -105,6 +106,8 @@ const Example = ({ navigation, route}) => {
     setState({
         messages: [...msg, ...state.messages],
       })
+
+    // TODO: update lastChat(timestamp) and lastChatContent
   }
 
     return (
