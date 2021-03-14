@@ -27,8 +27,7 @@ const ChatMain = ({ navigation, auth }) => {
     .catch(console.error);
 
 
-
-    // add message doc to chat
+    // add message doc to chat of mine
     await firestore()
     .collection(`users/${auth}/chat/${friendId}/messages`)
     .add({
@@ -46,47 +45,59 @@ const ChatMain = ({ navigation, auth }) => {
     .catch(console.error);
 
 
-    // // add a chat to mine
-    // await firestore()
-    // .collection('users')
-    // .doc(auth)
-    // .collection('chat')
-    // .doc(friendId)
-    // .collection('messages')
-    // .set({
-    //   text: `${auth} says hi`,
-    //   createdAt: firestore.FieldValue.serverTimestamp(),
-    //   user: {
-    //     _id: auth,
-    //     avatar: 'https://placeimg.com/140/140/any',
-    //     name: auth
-    //   }
-    // })
-    // .then(() => {
-    //   console.log('User added!');
-    // })
-    // .catch(console.error);
-
-    // // update my firned list
-    // firestore()
-    // .doc(`users/${auth}`)
-    // .update({
-    //   friends: firestore.FieldValue.arrayUnion(friendId),
-    // })
-    // .then(() => {
-    //   console.log('Friend list updated!')
-    // });
+    // add doc to chat of him/hers
+    await firestore()
+    .collection('users')
+    .doc(friendId)
+    .collection('chat')
+    .doc(auth)
+    .set({
+      name: auth,
+      lastChat: firestore.FieldValue.serverTimestamp(),
+    })
+    .then(() => {
+      console.log('User chat added!');
+    })
+    .catch(console.error);
 
 
-    // // update other person friend list
-    // firestore()
-    // .doc(`users/${friendId}`)
-    // .update({
-    //   friends: firestore.FieldValue.arrayUnion(auth),
-    // })
-    // .then(() => {
-    //   console.log('Friend list updated!')
-    // });
+    // add message doc to chat of him/hers
+    await firestore()
+    .collection(`users/${friendId}/chat/${auth}/messages`)
+    .add({
+        text: `Hi! Let's chat!`,
+        createdAt: firestore.FieldValue.serverTimestamp(),
+        user: {
+          _id: friendId,
+          avatar: 'https://placeimg.com/140/140/any',
+          name: auth
+        }
+      })
+    .then(() => {
+      console.log('Chat -> messages added!');
+    })
+    .catch(console.error);
+
+    // update my firned list
+    await firestore()
+    .doc(`users/${auth}`)
+    .update({
+      friends: firestore.FieldValue.arrayUnion(friendId),
+    })
+    .then(() => {
+      console.log('Friend list updated!')
+    });
+
+
+    // update other person friend list
+    await firestore()
+    .doc(`users/${friendId}`)
+    .update({
+      friends: firestore.FieldValue.arrayUnion(auth),
+    })
+    .then(() => {
+      console.log('Friend list updated!')
+    });
   }
 
   return (
