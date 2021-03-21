@@ -29,8 +29,8 @@ const Dash = ({ setAuth, navigation, auth }) => {
     <Text> You're In!</Text>
     <Text> You are {auth}</Text>
     <Button
-        title="Go to ChatMain"
-        onPress={() => navigation.navigate('ChatMain')}
+        title="Go to addFriend"
+        onPress={() => navigation.navigate('AddFriend')}
       />
     <Button title="Log Out" onPress={handleAuth}></Button>
 

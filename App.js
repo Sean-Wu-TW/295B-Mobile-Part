@@ -9,10 +9,10 @@
 import React, { useState} from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
-import ChatMain from './src/component/chatMain';
+import AddFriend from './src/component/addFriend';
 import LoginForm from './src/component/login';
 import Dash from './src/component/dash';
-import Example from './src/component/example';
+import Example from './src/component/ChatBox';
 import useToken from './src/auth/useToken';
 import MessagesScreen from './src/component/messagesScreen';
 import { NavigationContainer } from '@react-navigation/native';
@@ -31,8 +31,8 @@ const App: () => React$Node = () => {
       {auth ?       
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Dash">
-          <Stack.Screen name="ChatMain" >   
-            {props => <ChatMain {...props} auth={auth}/>}
+          <Stack.Screen name="AddFriend" >   
+            {props => <AddFriend {...props} auth={auth}/>}
           </Stack.Screen>
           <Stack.Screen name="Dash" >   
             {props => 

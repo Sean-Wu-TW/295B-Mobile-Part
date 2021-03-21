@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, TextInput, Text, Button, StyleSheet } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
-const ChatMain = ({ navigation, auth }) => {
+const AddFriend = ({ navigation, auth }) => {
   const [friendId, setFriendId] = useState('');
   console.log(auth);
   useEffect(() => {
@@ -131,4 +131,4 @@ const styles = StyleSheet.create({
 })
 
 
-export default ChatMain;
+export default AddFriend;
