@@ -5,7 +5,7 @@ import firestore from '@react-native-firebase/firestore';
 const axios = require('axios');
 
 
-const LoginForm = ({ setAuth }) => {
+const LoginForm = ({ setAuth, navigation }) => {
     const [userid, setUserid] = useState('');
     const [password, setpassword] = useState('');
     const LoginApi = async () => {
@@ -58,6 +58,7 @@ const LoginForm = ({ setAuth }) => {
                 secureTextEntry={true}
             />
             <Button title="Log in" onPress={LoginApi}></Button>
+            <Button title="Sign up" onPress={() => navigation.navigate('Signup')}></Button>
         </View>
         </>
     );
