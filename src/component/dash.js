@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, TextInput, Text, Button, StyleSheet, StatusBar, SafeAreaView, FlatList, TouchableOpacity, Alert } from 'react-native';
-import firestore from '@react-native-firebase/firestore';
+import { Text, Button, StyleSheet, StatusBar, TouchableOpacity, Alert } from 'react-native';
 navigator.geolocation = require('@react-native-community/geolocation');
 
 const Dash = ({ setAuth, navigation, auth }) => {
-  const [content, setContent] = useState('');
-  const [field, setField] = useState('me');
   const [location, setLocation] = useState();
   const handleAuth = () => {
     setAuth(false);

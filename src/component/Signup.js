@@ -38,7 +38,11 @@ const Signup = ({ navigation }) => {
                 maxLength={40}
                 onChangeText={setEmail}
             />
-            <Button title="Sign up" onPress={() => navigation.navigate('LoginForm')}></Button>
+            <Button title="Sign up" onPress={() => 
+
+                // TODO: validate form data ...
+                navigation.navigate('LoginForm')
+                }></Button>
             
         </View>
         </>
