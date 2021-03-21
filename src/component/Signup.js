@@ -38,8 +38,7 @@ const Signup = ({ navigation }) => {
                 maxLength={40}
                 onChangeText={setEmail}
             />
-            <Button title="Sign up" ></Button>
-            <Button title="Login" onPress={() => navigation.navigate('LoginForm')}></Button>
+            <Button title="Sign up" onPress={() => navigation.navigate('LoginForm')}></Button>
             
         </View>
         </>
