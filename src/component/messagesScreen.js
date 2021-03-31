@@ -54,10 +54,44 @@ const MessagesScreen = ({navigation, auth}) => {
       });
       setInbox(toAppend);
     })
-  }
-  useEffect(() => {
-    fetchUserInfo();
+  };
 
+  console.log("v2!!!!!!!!!!!!!!!!!!!!!");
+  const fetchUserInfoV2 = async () => {
+    firestore()
+    .collection('users')
+    .doc(auth)
+    .get()
+    .then(snapshot => {
+      let toAppend = [];
+      let count = snapshot.data().chats.length;
+      snapshot.data().chats.forEach(chat => {
+        let chtRef = chat.chatId;
+        console.log('chatId@@@@@@@@@@@@@@', chtRef);
+        chtRef.get().then(chatSnapshot => {
+          let data = chatSnapshot.data();
+          toAppend.push({
+            id: data.id,
+            userid: data.id,
+            chatId: chtRef.id,
+            userName: data.name,
+            messageTime: data.lastMessage?.toDate().toDateString()
+          });
+        },err => {
+          console.log(error);
+        }).finally(_ => {
+          count -= 1;
+          if (count <= 0) {
+            setInbox(toAppend);
+          }
+        });
+      })
+    })
+  };
+
+  useEffect(() => {
+    //fetchUserInfo();
+    fetchUserInfoV2();
   }, [])
 
 
@@ -68,7 +102,8 @@ const MessagesScreen = ({navigation, auth}) => {
           data={inbox}
           keyExtractor={item=>item.id}
           renderItem={({item}) => (
-            <Card onPress={() => navigation.navigate('Example', { userName: item.userName, userid: item.userid, auth: auth})}>
+            /*<Card onPress={() => navigation.navigate('Example', { userName: item.userName, userid: item.userid, auth: auth})}>*/
+            <Card onPress={() => navigation.navigate('Example', { userName: item.userName, userid: item.userid, auth: auth, chatId: item.chatId})}>
               <UserInfo>
                 <UserImgWrapper>
                   <UserImg source={item.userImg} />
