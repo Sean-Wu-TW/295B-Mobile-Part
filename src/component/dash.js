@@ -6,24 +6,45 @@ navigator.geolocation = require('@react-native-community/geolocation');
 const Dash = ({ setAuth, navigation, auth }) => {
   const [content, setContent] = useState('');
   const [field, setField] = useState('me');
-  const [location, setLocation] = useState();
+  const [location, setLocation] = useState({});
+  useEffect(() => {
+    if (location.latitude) {
+        saveUserLocation();
+    }
+  }, [location]);
+
   const handleAuth = () => {
     setAuth(false);
   }
 
   const findCoordinates = () => {
+    // console.log(auth);
     navigator.geolocation.getCurrentPosition(
       position => {
-        const location = JSON.stringify(position);
-        setLocation(location);
+        // const location = JSON.stringify(position);
+        // console.log(position['coords']);
+        setLocation({longitude: position['coords']['longitude'], latitude: position['coords']['latitude']});
+
+        // console.log(location.latitude);
       },
       error => Alert.alert(error.message),
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
     );
   };
 
-  useEffect(() => {
-  }, [])
+  const saveUserLocation = async() => {
+    const users = await firestore()
+      .collection('users')
+      .doc(auth)
+      .update({'location': new firestore.GeoPoint(location.latitude, location.longitude)});
+  }
+
+
+  // useEffect(() => {
+  // }, [])
+  
+  
+
   return (
     <>
     <Text> You're In!</Text>
@@ -36,7 +57,8 @@ const Dash = ({ setAuth, navigation, auth }) => {
 
     <TouchableOpacity onPress={findCoordinates}>
 					<Text style={styles.welcome}>Find My Coords?</Text>
-					<Text>Location: {location}</Text>
+					<Text>Location: {location.longitude}</Text>
+          <Text>Location: {location.latitude}</Text>
 				</TouchableOpacity>
     </>
   );

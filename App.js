@@ -12,24 +12,63 @@ import { Colors } from 'react-native/Libraries/NewAppScreen';
 import AddFriend from './src/component/addFriend';
 import LoginForm from './src/component/login';
 import Dash from './src/component/dash';
+import NearbyList from './src/component/NearbyList';
 import Example from './src/component/ChatBox';
 import useToken from './src/auth/useToken';
 import MessagesScreen from './src/component/messagesScreen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 // import database from '@react-native-firebase/database';
 
 
 
 const App: () => React$Node = () => {
-  const [auth, setAuth] = useToken('');
+  const [auth, setAuth] = useState('');
 
   const Stack = createStackNavigator();
 
+  const Tab = createMaterialBottomTabNavigator();
+
   return (
     <>
-      {auth ?       
-      <NavigationContainer>
+      {auth ?  
+        <NavigationContainer>
+          <Tab.Navigator>
+            <Tab.Screen 
+              name="Dash"
+              children={()=>
+                <Dash
+                  setAuth={setAuth}
+                  auth={auth} 
+                />
+              }
+            />
+            <Tab.Screen 
+              name="Message Screen"
+              children={()=>
+                <MessagesScreen
+                  auth={auth} />
+                } 
+            />
+            <Tab.Screen
+              name="Add Friend"
+              children={()=>
+                <AddFriend
+                  auth={auth} />
+              }
+            />
+            <Tab.Screen
+              name="Nearby List"
+              children={()=>
+                <NearbyList
+                  auth={auth} />
+              } 
+            />
+          </Tab.Navigator>
+        </NavigationContainer>
+
+      /* <NavigationContainer>
         <Stack.Navigator initialRouteName="Dash">
           <Stack.Screen name="AddFriend" >   
             {props => <AddFriend {...props} auth={auth}/>}
@@ -50,8 +89,14 @@ const App: () => React$Node = () => {
             })} 
           >   
           </Stack.Screen>
-        </Stack.Navigator>
-      </NavigationContainer>
+          {/* <Stack.Screen
+            name="Nearby List"
+            component={NearbyList}
+          >
+          </Stack.Screen> */
+
+        /* </Stack.Navigator>
+      </NavigationContainer> */
        : <LoginForm setAuth={setAuth}/>}
     </>
   );
