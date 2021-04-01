@@ -19,6 +19,7 @@ import MessagesScreen from './src/component/messagesScreen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 // import database from '@react-native-firebase/database';
 
 
@@ -34,9 +35,18 @@ const App: () => React$Node = () => {
     <>
       {auth ?  
         <NavigationContainer>
-          <Tab.Navigator>
+          <Tab.Navigator
+            activeColor="#e91e63"
+            style={{ backgroundColor: 'tomato' }}
+          >
             <Tab.Screen 
               name="Dash"
+              options={{
+                tabBarLabel: 'Chats',
+                tabBarIcon: () => (
+                  <MaterialCommunityIcons name="chat" size={26} />
+                ),
+              }}
               children={()=>
                 <Dash
                   setAuth={setAuth}
@@ -46,6 +56,12 @@ const App: () => React$Node = () => {
             />
             <Tab.Screen 
               name="Message Screen"
+              options={{
+                tabBarLabel: 'Contacts',
+                tabBarIcon: () => (
+                  <MaterialCommunityIcons name="contacts" size={26} />
+                ),
+              }}
               children={()=>
                 <MessagesScreen
                   auth={auth} />
@@ -53,6 +69,12 @@ const App: () => React$Node = () => {
             />
             <Tab.Screen
               name="Add Friend"
+              options={{
+                tabBarLabel: 'Settings',
+                tabBarIcon: () => (
+                  <MaterialCommunityIcons name="account-settings" size={26} />
+                ),
+              }}
               children={()=>
                 <AddFriend
                   auth={auth} />
@@ -60,6 +82,12 @@ const App: () => React$Node = () => {
             />
             <Tab.Screen
               name="Nearby List"
+              options={{
+                tabBarLabel: 'Nearby',
+                tabBarIcon: () => (
+                  <MaterialCommunityIcons name="near-me" size={26} />
+                ),
+              }}
               children={()=>
                 <NearbyList
                   auth={auth} />

@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { View, TextInput, Text, Button, StyleSheet, StatusBar, SafeAreaView, FlatList, TouchableOpacity, Alert } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+// import geofire from 'geofire-common'
 navigator.geolocation = require('@react-native-community/geolocation');
+
+const geofire = require('geofire-common');
 
 const Dash = ({ setAuth, navigation, auth }) => {
   const [content, setContent] = useState('');
@@ -23,6 +26,7 @@ const Dash = ({ setAuth, navigation, auth }) => {
       position => {
         // const location = JSON.stringify(position);
         // console.log(position['coords']);
+        
         setLocation({longitude: position['coords']['longitude'], latitude: position['coords']['latitude']});
 
         // console.log(location.latitude);
@@ -32,12 +36,24 @@ const Dash = ({ setAuth, navigation, auth }) => {
     );
   };
 
+  // const calculateGeoHash = () => {
+  //   const hash = geofire.geohashForLocation([location.latitude, location.longitude]);
+  // }
+
   const saveUserLocation = async() => {
+    const hash = geofire.geohashForLocation([location.latitude, location.longitude]);
+    const newLocation = {
+      geohash: hash,
+      latitude: location.latitude,
+      longitude: location.longitude
+    }
     const users = await firestore()
       .collection('users')
       .doc(auth)
-      .update({'location': new firestore.GeoPoint(location.latitude, location.longitude)});
+      .update({'location': newLocation});
   }
+
+  
 
 
   // useEffect(() => {
