@@ -4,8 +4,6 @@ import { Button } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import users from '../service/users.js';
 
-console.log("~~~~~~~~~~~~~~~~~", users);
-
 const Example = ({ navigation, route}) => {
 
   const [state, setState] = useState({ messages: [] });
@@ -27,12 +25,11 @@ const Example = ({ navigation, route}) => {
     if(payload?.createdAt){
       const date = toDateTime(payload.createdAt.seconds);
       res.createdAt = date;
-      res._id = payload.createdAt.seconds;
+      res._id = payload.createdAt.seconds + payload.user?.userid;
     }
     if(payload?.text){
       res.text = payload.text;
     }
-    console.log("payload _________________________________________________", payload.user.userid);
     if(payload.user?.userid === whoami){
       res.user._id = 1
     }else{
@@ -71,31 +68,26 @@ const Example = ({ navigation, route}) => {
     //   });
     //   setState({ messages: toAppend});
     // });
-    console.log('chatId', chatId);
 
     const subscriber2 = firestore().collection('chatsV2')
     .doc(chatId)
     .onSnapshot(snapShot => {
-      console.log('lalala', snapShot.data());
       let toAppend = [];
       let data = snapShot.data();
       let messages = data.messages;
       let count = messages.length;
-      console.log('mesages length', count);
       messages.forEach(messageRef => messageRef.get().then(message => {
         let msgData = message.data();
         users.getUser(msgData.fromUser.id).then(user => {
-          console.log('hahaha get user', msgData.fromUser.id, user);
           msgData.user = user;
           toAppend.push(parseMsg(msgData));
         })
-      }).catch(err => {
-        console.log("fkkkkkkkkkkkkkkkkkkkkkkkk", err);
       })
       .finally(_ => {
         count -= 1;
         if (count == 0) {
-          console.log('setting msg', toAppend);
+                toAppend.sort(function(a,b){
+                  return new Date(b.createdAt) - new Date(a.createdAt);});
           setState({messages:toAppend});
         }
       }));
@@ -147,6 +139,69 @@ const Example = ({ navigation, route}) => {
     // TODO: update lastChat(timestamp) and lastChatContent
   }
 
+  const onSendV2 = (msg) => {
+    let createdAt = firestore.Timestamp.fromDate(new Date())
+    //first create message.
+    firestore()
+    .collection('messages')
+    .add({
+      chatId,
+      fromUser: firestore().collection('users').doc(whoami),
+      text: msg.text,
+      createdAt
+    }).then(message => {
+      // save it into chats
+      let chat = firestore().collection('chatsV2')
+      .doc(chatId);
+      return chat.update({
+        messages: firestore.FieldValue.arrayUnion(message),
+        lastMessage:createdAt
+      }).then(() => {
+        return {chat, message};
+      });
+    })
+    .then(({chat, message}) => {
+      // update inbox
+      return chat.get().then(chatSnapshot => {
+        let users = chatSnapshot.data().members;
+        let ucount = users.length;
+        users.forEach(u => {
+          if (u.id != whoami) {
+            u.get().then(userSnapshot => {
+              let user = userSnapshot.data();
+              let chats2Update = user.chats;
+              let find = 0;
+              chats2Update.forEach(c => {
+                if (c.chatId.id == chatId) {
+                  find = 1;
+                  if (c.lastFetch.seconds < createdAt.seconds) {
+                    c.unread += 1;
+                  }
+                }
+              });
+              if (find == 0) {
+                chats2Update.push({
+                  chatId,
+                  lastFetch: createdAt,
+                  unread:1
+                });
+              }
+              return u.update({chats:chats2Update});
+            })
+            .finally(() => {
+              ucount -= 1;
+              if (ucount == 1) {
+                setState({
+                  messages: [msg, ...state.messages],
+                })
+              }
+            })
+          }
+        })
+      })
+    });
+  } 
+
     return (
       <>
       <Button
@@ -155,7 +210,7 @@ const Example = ({ navigation, route}) => {
       />
       <GiftedChat
         messages={state.messages}
-        onSend={(msg) => onSend(msg)}
+        onSend={([msg]) => onSendV2(msg)}
         user={{
           _id: 1,
         }}

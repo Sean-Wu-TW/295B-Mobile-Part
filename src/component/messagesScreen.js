@@ -12,10 +12,11 @@ import {
   MessageText,
   TextSection,
 } from '../styles/messageStyles';
-import firestore from '@react-native-firebase/firestore';
+import firestore, { firebase } from '@react-native-firebase/firestore';
 import UUIDGenerator from 'react-native-uuid-generator';
 import utils from '../util';
 
+let chats = [];
 
 const messages = [
   {
@@ -56,7 +57,6 @@ const MessagesScreen = ({navigation, auth}) => {
     })
   };
 
-  console.log("v2!!!!!!!!!!!!!!!!!!!!!");
   const fetchUserInfoV2 = async () => {
     firestore()
     .collection('users')
@@ -64,10 +64,12 @@ const MessagesScreen = ({navigation, auth}) => {
     .get()
     .then(snapshot => {
       let toAppend = [];
-      let count = snapshot.data().chats.length;
+      chats = snapshot.data().chats;
+      let count = chats.length;
+      console.log("~~~~~~~~~~", chats);
       snapshot.data().chats.forEach(chat => {
         let chtRef = chat.chatId;
-        console.log('chatId@@@@@@@@@@@@@@', chtRef);
+        console.log(chat.chatId);
         chtRef.get().then(chatSnapshot => {
           let data = chatSnapshot.data();
           toAppend.push({
@@ -89,6 +91,18 @@ const MessagesScreen = ({navigation, auth}) => {
     })
   };
 
+  function pressChat(userName, userId, auth, chatId) {
+    chats.forEach(chat => {
+      if (chat.chatId.id == chatId) {
+        chat.lastFetch = firebase.firestore.Timestamp.fromDate(new Date());
+         chat.unread=0;
+        }
+      });
+    firestore().collection('users').doc(auth).update({chats}).then(()=> {
+      navigation.navigate('Example', {userName, userId, auth, chatId});
+    });
+  }
+
   useEffect(() => {
     //fetchUserInfo();
     fetchUserInfoV2();
@@ -103,7 +117,7 @@ const MessagesScreen = ({navigation, auth}) => {
           keyExtractor={item=>item.id}
           renderItem={({item}) => (
             /*<Card onPress={() => navigation.navigate('Example', { userName: item.userName, userid: item.userid, auth: auth})}>*/
-            <Card onPress={() => navigation.navigate('Example', { userName: item.userName, userid: item.userid, auth: auth, chatId: item.chatId})}>
+            <Card onPress={() => pressChat(item.userName, item.userId, auth, item.chatId)}>
               <UserInfo>
                 <UserImgWrapper>
                   <UserImg source={item.userImg} />
