@@ -2,13 +2,15 @@ import firestore from '@react-native-firebase/firestore';
 
 function userCache() {
     const users = {};
+    const promises = {};
     function getUser(uid, forceFetch) {
-        console.log('try to get user making call aaa', uid);
         if (users[uid] && !forceFetch) {
             return Promise.resolve(users[uid]);
         }
-        console.log('try to get user making call', uid);
-        return firestore()
+        if (promises[uid]) {
+            return promises[uid];
+        }
+        promises[uid] = firestore()
         .collection('users')
         .doc(uid)
         .get()
@@ -17,11 +19,13 @@ function userCache() {
                 return null;
             }
             users[uid] = userSnapShot.data();
+            promises[uid] = null;
             return userSnapShot.data();
         }, err => {
             console.log(error);
             return null;
-        })
+        });
+        return promises[uid];
     }
 
     return {getUser};
