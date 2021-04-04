@@ -20,14 +20,19 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+// import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/SimpleLineIcons';
 // import database from '@react-native-firebase/database';
+import {StackNavigator2, NearbyStackNavigator} from './src/component/StackNavigator';
+// import {NearbyStackNavigator} from './src/component/NearbyStackNavigator';
+
 
 
 
 const App: () => React$Node = () => {
   const [auth, setAuth] = useState('');
 
-  const Stack = createStackNavigator();
+  // const Stack = createStackNavigator();
 
   const Tab = createMaterialBottomTabNavigator();
 
@@ -36,62 +41,60 @@ const App: () => React$Node = () => {
       {auth ?  
         <NavigationContainer>
           <Tab.Navigator
-            activeColor="#e91e63"
+            activeColor="#fff"
             style={{ backgroundColor: 'tomato' }}
           >
-            <Tab.Screen 
+            <Tab.Screen
               name="Dash"
               options={{
-                tabBarLabel: 'Chats',
+                tabBarLabel: 'Contacts',
+                tabBarColor: '#1f65ff',
                 tabBarIcon: () => (
-                  <MaterialCommunityIcons name="chat" size={26} />
+                  <Icon name="people" size={22} />
                 ),
               }}
               children={()=>
                 <Dash
                   setAuth={setAuth}
-                  auth={auth} 
-                />
-              }
-            />
-            <Tab.Screen 
-              name="Message Screen"
-              options={{
-                tabBarLabel: 'Contacts',
-                tabBarIcon: () => (
-                  <MaterialCommunityIcons name="contacts" size={26} />
-                ),
-              }}
-              children={()=>
-                <MessagesScreen
                   auth={auth} />
                 } 
             />
+
+            <Tab.Screen 
+              name="Message Screen"
+              options={{
+                tabBarLabel: 'Chats',
+                tabBarColor: '#009387',
+                tabBarIcon: () => (
+                  <Icon name="bubbles" size={22} />
+                ),
+              }}>
+              {(props) => < StackNavigator2 {...props} auth={auth}/>}
+            </Tab.Screen>
+            <Tab.Screen
+              name="Nearby List"
+              options={{
+                tabBarLabel: 'Nearby',
+                tabBarColor: '#d02860',
+                tabBarIcon: () => (
+                  <Icon name="compass" size={22} />
+                ),
+              }}>
+                {(props) => < NearbyStackNavigator {...props} auth={auth}/>}
+              </Tab.Screen>
             <Tab.Screen
               name="Add Friend"
               options={{
                 tabBarLabel: 'Settings',
+                tabBarColor: '#694fad',
                 tabBarIcon: () => (
-                  <MaterialCommunityIcons name="account-settings" size={26} />
+                  <Icon name="settings" size={22} />
                 ),
               }}
               children={()=>
                 <AddFriend
                   auth={auth} />
               }
-            />
-            <Tab.Screen
-              name="Nearby List"
-              options={{
-                tabBarLabel: 'Nearby',
-                tabBarIcon: () => (
-                  <MaterialCommunityIcons name="near-me" size={26} />
-                ),
-              }}
-              children={()=>
-                <NearbyList
-                  auth={auth} />
-              } 
             />
           </Tab.Navigator>
         </NavigationContainer>
