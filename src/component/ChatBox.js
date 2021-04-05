@@ -87,6 +87,7 @@ const ChatBox = ({ navigation, route}) => {
       .finally(_ => {
         count -= 1;
         if (count == 0) {
+          console.log("messages all loaded");
                 toAppend.sort(function(a,b){
                   return new Date(b.createdAt) - new Date(a.createdAt);});
           setState({messages:toAppend});
