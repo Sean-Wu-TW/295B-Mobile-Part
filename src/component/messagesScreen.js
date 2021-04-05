@@ -34,6 +34,7 @@ const messages = [
 const MessagesScreen = ({navigation, auth}) => {
   const [inbox, setInbox] = useState([]);
 
+  console.log('this is', auth)
   const fetchUserInfo = async () => {
     firestore()
     .collection('users')
@@ -58,6 +59,7 @@ const MessagesScreen = ({navigation, auth}) => {
   };
 
   const fetchUserInfoV2 = async () => {
+    console.log("fetchu user info and chat list");
     firestore()
     .collection('users')
     .doc(auth)
@@ -69,14 +71,13 @@ const MessagesScreen = ({navigation, auth}) => {
       console.log("~~~~~~~~~~", chats);
       snapshot.data().chats.forEach(chat => {
         let chtRef = chat.chatId;
-        console.log(chat.chatId);
         chtRef.get().then(chatSnapshot => {
           let data = chatSnapshot.data();
           toAppend.push({
-            id: data.id,
+            id: chtRef.id,
             userid: data.id,
             chatId: chtRef.id,
-            userName: data.name,
+            userName: data.isGroupChat? data.name: data.members.find(member=> member.memberId.id != auth).name,
             messageTime: data.lastMessage?.toDate().toDateString()
           });
         },err => {
