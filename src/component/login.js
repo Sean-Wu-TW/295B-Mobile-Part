@@ -16,6 +16,7 @@ const LoginForm = ({ setAuth }) => {
           .get();
 
           if(user.exists && user.data().password === password){
+            console.log(userid);
             console.log('good!');
             setAuth(userid);
           }else{
