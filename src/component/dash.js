@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, TextInput, Text, Button, StyleSheet, StatusBar, SafeAreaView, FlatList, TouchableOpacity, Alert } from 'react-native';
-import firestore from '@react-native-firebase/firestore';
+
+
 navigator.geolocation = require('@react-native-community/geolocation');
 
 const Dash = ({ setAuth, navigation, auth }) => {
@@ -31,6 +32,10 @@ const Dash = ({ setAuth, navigation, auth }) => {
     <Button
         title="Go to addFriend"
         onPress={() => navigation.navigate('AddFriend')}
+      />
+    <Button
+        title="Friends"
+        onPress={() => navigation.navigate('Friends', {auth, useage:"listUser"})}
       />
     <Button title="Log Out" onPress={handleAuth}></Button>
 

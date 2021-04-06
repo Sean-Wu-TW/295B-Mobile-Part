@@ -58,40 +58,6 @@ const MessagesScreen = ({navigation, auth}) => {
     })
   };
 
-  const fetchUserInfoV2 = async () => {
-    console.log("fetchu user info and chat list");
-    firestore()
-    .collection('users')
-    .doc(auth)
-    .get()
-    .then(snapshot => {
-      let toAppend = [];
-      chats = snapshot.data().chats;
-      let count = chats.length;
-      console.log("~~~~~~~~~~", chats);
-      snapshot.data().chats.forEach(chat => {
-        let chtRef = chat.chatId;
-        chtRef.get().then(chatSnapshot => {
-          let data = chatSnapshot.data();
-          toAppend.push({
-            id: chtRef.id,
-            userid: data.id,
-            chatId: chtRef.id,
-            userName: data.isGroupChat? data.name: data.members.find(member=> member.memberId.id != auth).name,
-            messageTime: data.lastMessage?.toDate().toDateString()
-          });
-        },err => {
-          console.log(error);
-        }).finally(_ => {
-          count -= 1;
-          if (count <= 0) {
-            setInbox(toAppend);
-          }
-        });
-      })
-    })
-  };
-
   function pressChat(userName, userId, auth, chatId) {
     chats.forEach(chat => {
       if (chat.chatId.id == chatId) {
@@ -106,7 +72,40 @@ const MessagesScreen = ({navigation, auth}) => {
 
   useEffect(() => {
     //fetchUserInfo();
-    fetchUserInfoV2();
+    const fetchUserInfoV2 = 
+      firestore()
+      .collection('users')
+      .doc(auth)
+      .onSnapshot(snapshot => {
+        let toAppend = [];
+        chats = snapshot.data().chats;
+        let count = chats.length;
+        snapshot.data().chats.forEach(chat => {
+          console.log('chat$$$$$$$$$$$$$$$$', chat);
+          let chtRef = chat.chatId;
+          chtRef.get().then(chatSnapshot => {
+            let data = chatSnapshot.data();
+            let chatItem = {
+              id: chtRef.id,
+              userid: data.id,
+              chatId: chtRef.id,
+              userName: data.isGroupChat? data.name: data.members.find(member=> member.memberId.id != auth).name,
+              messageTime: data.lastMessage?.toDate().toDateString(),
+              userImage: data.isGroupChat? 'asset:/user-6.jpg': data.members.find(member=> member.memberId.id != auth).avatar,
+            };
+            toAppend.push(chatItem);
+          },err => {
+            console.log(error);
+          }).finally(_ => {
+            count -= 1;
+            if (count <= 0) {
+              setInbox(toAppend);
+            }
+          });
+        })
+      });
+
+    return () => fetchUserInfoV2();
   }, [])
 
 
@@ -121,7 +120,7 @@ const MessagesScreen = ({navigation, auth}) => {
             <Card onPress={() => pressChat(item.userName, item.userId, auth, item.chatId)}>
               <UserInfo>
                 <UserImgWrapper>
-                  <UserImg source={item.userImg} />
+                  <UserImg source={{uri: item.userImage}} />
                 </UserImgWrapper>
                 <TextSection>
                   <UserInfoText>
