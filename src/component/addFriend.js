@@ -11,78 +11,29 @@ const AddFriend = ({ navigation, auth }) => {
 
   const handleSubmit = async () => {
 
-    // add doc to chat of mine
-    await firestore()
-    .collection('users')
-    .doc(auth)
-    .collection('chat')
-    .doc(friendId)
-    .set({
-      name: friendId,
-      lastChat: firestore.FieldValue.serverTimestamp(),
-    })
-    .then(() => {
-      console.log('User chat added!');
-    })
-    .catch(console.error);
-
-
-    // add message doc to chat of mine
-    await firestore()
-    .collection(`users/${auth}/chat/${friendId}/messages`)
-    .add({
-        text: `Hi! Let's chat!`,
-        createdAt: firestore.FieldValue.serverTimestamp(),
-        user: {
-          _id: auth,
-          avatar: 'https://placeimg.com/140/140/any',
-          name: auth
-        }
-      })
-    .then(() => {
-      console.log('Chat -> messages added!');
-    })
-    .catch(console.error);
-
-
-    // add doc to chat of him/hers
-    await firestore()
+    // search users list for user & extract info...
+    const user = await firestore()
     .collection('users')
     .doc(friendId)
-    .collection('chat')
+    .get();
+    // console.log(user);
+    // console.log(user.data().name);
+
+    const me = await firestore()
+    .collection('users')
     .doc(auth)
-    .set({
-      name: auth,
-      lastChat: firestore.FieldValue.serverTimestamp(),
-    })
-    .then(() => {
-      console.log('User chat added!');
-    })
-    .catch(console.error);
-
-
-    // add message doc to chat of him/hers
-    await firestore()
-    .collection(`users/${friendId}/chat/${auth}/messages`)
-    .add({
-        text: `Hi! Let's chat!`,
-        createdAt: firestore.FieldValue.serverTimestamp(),
-        user: {
-          _id: auth,
-          avatar: 'https://placeimg.com/140/140/any',
-          name: auth
-        }
-      })
-    .then(() => {
-      console.log('Chat -> messages added!');
-    })
-    .catch(console.error);
+    .get();
+    console.log(me);
+    console.log(me.data().name);
 
     // update my friend list
     await firestore()
     .doc(`users/${auth}`)
     .update({
-      friends: firestore.FieldValue.arrayUnion(friendId),
+      friends: firestore.FieldValue.arrayUnion({
+        avatar: user.data().avatar, 
+        userId: user.data().userid, 
+        userName: user.data().name}),
     })
     .then(() => {
       console.log('Friend list updated!')
@@ -93,10 +44,13 @@ const AddFriend = ({ navigation, auth }) => {
     await firestore()
     .doc(`users/${friendId}`)
     .update({
-      friends: firestore.FieldValue.arrayUnion(auth),
+      friends: firestore.FieldValue.arrayUnion({
+        avatar: me.data().avatar, 
+        userId: me.data().userid, 
+        userName: me.data().name}),
     })
     .then(() => {
-      console.log('Friend list updated!')
+      console.log('Friend list updated!(Friend)')
     });
   }
 
