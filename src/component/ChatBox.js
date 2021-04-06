@@ -16,7 +16,7 @@ const ChatBox = ({ navigation, route}) => {
   console.log('chat Id', chatId);
   console.log('param', route.params);
   
-  function parseMsg(payload){
+  function parseMsg(payload) {
     function toDateTime(secs) {
       var t = new Date(1970, 0, 1); // Epoch
       t.setSeconds(secs);
@@ -42,8 +42,10 @@ const ChatBox = ({ navigation, route}) => {
   }
   // console.log(state.messages)
 
+
+
   useEffect(() => {
-    
+
     // users/{userid}/chat/{another userid}/messages
     // messages: [{"_id": 1614772278, "createdAt": 2021-03-03T03:51:18.000Z, "text": "Yu", 
     // "user": {"_id": 1, "avatar": "https://placeimg.com/140/140/any", "name": "john"}}]
@@ -96,7 +98,7 @@ const ChatBox = ({ navigation, route}) => {
     });
 
     return () => subscriber2();
-  },[]) 
+    },[])
  
   const onSend = (msg = []) => {
     // update chat history of mine
@@ -168,8 +170,9 @@ const ChatBox = ({ navigation, route}) => {
         let users = chatSnapshot.data().members;
         let ucount = users.length;
         users.forEach(u => {
-          if (u.id != whoami) {
-            u.get().then(userSnapshot => {
+          console.log('updating inbox ', u.memberId.id, u);
+          if (u.memberId.id != whoami) {
+            u.memberId.get().then(userSnapshot => {
               let user = userSnapshot.data();
               let chats2Update = user.chats;
               let find = 0;
@@ -188,7 +191,7 @@ const ChatBox = ({ navigation, route}) => {
                   unread:1
                 });
               }
-              return u.update({chats:chats2Update});
+              return u.memberId.update({chats:chats2Update});
             })
             .finally(() => {
               ucount -= 1;
