@@ -117,7 +117,10 @@
              component={NearbyList}
            >
            </Stack.Screen> */
- 
+          /* <Stack.Screen 
+           name="Friends" component={Friends}
+         >
+         </Stack.Screen> */
          /* </Stack.Navigator>
        </NavigationContainer> */
         : <LoginForm setAuth={setAuth}/>}
@@ -168,4 +171,3 @@
  });
  
  export default App;
- 
