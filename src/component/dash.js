@@ -1,26 +1,66 @@
 import React, { useEffect, useState } from 'react';
-import { Text, Button, StyleSheet, StatusBar, TouchableOpacity, Alert } from 'react-native';
+import { View, TextInput, Text, Button, StyleSheet, StatusBar, SafeAreaView, FlatList, TouchableOpacity, Alert } from 'react-native';
+import firestore from '@react-native-firebase/firestore';
+// import geofire from 'geofire-common'
 navigator.geolocation = require('@react-native-community/geolocation');
 
+const geofire = require('geofire-common');
+
 const Dash = ({ setAuth, navigation, auth }) => {
-  const [location, setLocation] = useState();
+  const [content, setContent] = useState('');
+  const [field, setField] = useState('me');
+  const [location, setLocation] = useState({});
+  useEffect(() => {
+    if (location.latitude) {
+        saveUserLocation();
+    }
+  }, [location]);
+
   const handleAuth = () => {
     setAuth(false);
   }
 
   const findCoordinates = () => {
+    // console.log(auth);
     navigator.geolocation.getCurrentPosition(
       position => {
-        const location = JSON.stringify(position);
-        setLocation(location);
+        // const location = JSON.stringify(position);
+        // console.log(position['coords']);
+        
+        setLocation({longitude: position['coords']['longitude'], latitude: position['coords']['latitude']});
+
+        // console.log(location.latitude);
       },
       error => Alert.alert(error.message),
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
     );
   };
 
-  useEffect(() => {
-  }, [])
+  // const calculateGeoHash = () => {
+  //   const hash = geofire.geohashForLocation([location.latitude, location.longitude]);
+  // }
+
+  const saveUserLocation = async() => {
+    const hash = geofire.geohashForLocation([location.latitude, location.longitude]);
+    const newLocation = {
+      geohash: hash,
+      latitude: location.latitude,
+      longitude: location.longitude
+    }
+    const users = await firestore()
+      .collection('users')
+      .doc(auth)
+      .update({'location': newLocation});
+  }
+
+  
+
+
+  // useEffect(() => {
+  // }, [])
+  
+  
+
   return (
     <>
     <Text> You're In!</Text>
@@ -33,7 +73,8 @@ const Dash = ({ setAuth, navigation, auth }) => {
 
     <TouchableOpacity onPress={findCoordinates}>
 					<Text style={styles.welcome}>Find My Coords?</Text>
-					<Text>Location: {location}</Text>
+					<Text>Location: {location.longitude}</Text>
+          <Text>Location: {location.latitude}</Text>
 				</TouchableOpacity>
     </>
   );
