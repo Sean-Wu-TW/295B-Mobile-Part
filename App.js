@@ -11,6 +11,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import AddFriend from './src/component/addFriend';
 import LoginForm from './src/component/login';
+import Friends from './src/component/friends';
 import Dash from './src/component/dash';
 import Example from './src/component/ChatBox';
 import useToken from './src/auth/useToken';
@@ -49,6 +50,10 @@ const App: () => React$Node = () => {
               headerBackTitleVisible: false,
             })} 
           >   
+          </Stack.Screen>
+          <Stack.Screen 
+            name="Friends" component={Friends}
+          >
           </Stack.Screen>
         </Stack.Navigator>
       </NavigationContainer>
