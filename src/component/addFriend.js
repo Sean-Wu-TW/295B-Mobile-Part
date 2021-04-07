@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, TextInput, Text, Button, StyleSheet } from 'react-native';
+import { View, TextInput, Text, Button, StyleSheet, Alert } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
 const AddFriend = ({ navigation, auth }) => {
@@ -10,110 +10,89 @@ const AddFriend = ({ navigation, auth }) => {
   }, [friendId])
 
   const handleSubmit = async () => {
+    try {
+      // search users list for user & extract info...
+      const user = await firestore()
+        .collection('users')
+        .doc(friendId)
+        .get();
 
-    // add doc to chat of mine
-    await firestore()
-    .collection('users')
-    .doc(auth)
-    .collection('chat')
-    .doc(friendId)
-    .set({
-      name: friendId,
-      lastChat: firestore.FieldValue.serverTimestamp(),
-    })
-    .then(() => {
-      console.log('User chat added!');
-    })
-    .catch(console.error);
+      // case if user does not exist
+      if (!user.exists) {
+        Alert.alert(
+          "User does not exist",
+          "",
+          [
+            {
+              text: "Cancel",
+              onPress: () => { },
+              style: "cancel"
+            },
+            {
+              text: "OK",
+              onPress: () => { }
+            }
+          ],
+          { cancelable: false }
+        );
+        return 
+      }
 
+      const me = await firestore()
+        .collection('users')
+        .doc(auth)
+        .get();
 
-    // add message doc to chat of mine
-    await firestore()
-    .collection(`users/${auth}/chat/${friendId}/messages`)
-    .add({
-        text: `Hi! Let's chat!`,
-        createdAt: firestore.FieldValue.serverTimestamp(),
-        user: {
-          _id: auth,
-          avatar: 'https://placeimg.com/140/140/any',
-          name: auth
-        }
-      })
-    .then(() => {
-      console.log('Chat -> messages added!');
-    })
-    .catch(console.error);
-
-
-    // add doc to chat of him/hers
-    await firestore()
-    .collection('users')
-    .doc(friendId)
-    .collection('chat')
-    .doc(auth)
-    .set({
-      name: auth,
-      lastChat: firestore.FieldValue.serverTimestamp(),
-    })
-    .then(() => {
-      console.log('User chat added!');
-    })
-    .catch(console.error);
+      // update my friend list
+      await firestore()
+        .doc(`users/${auth}`)
+        .update({
+          friends: firestore.FieldValue.arrayUnion({
+            avatar: user.data().avatar,
+            userId: user.data().userid,
+            userName: user.data().name
+          }),
+        })
+        .then(() => {
+          console.log('Friend list updated!')
+        });
 
 
-    // add message doc to chat of him/hers
-    await firestore()
-    .collection(`users/${friendId}/chat/${auth}/messages`)
-    .add({
-        text: `Hi! Let's chat!`,
-        createdAt: firestore.FieldValue.serverTimestamp(),
-        user: {
-          _id: auth,
-          avatar: 'https://placeimg.com/140/140/any',
-          name: auth
-        }
-      })
-    .then(() => {
-      console.log('Chat -> messages added!');
-    })
-    .catch(console.error);
+      // update other person friend list
+      await firestore()
+        .doc(`users/${friendId}`)
+        .update({
+          friends: firestore.FieldValue.arrayUnion({
+            avatar: me.data().avatar,
+            userId: me.data().userid,
+            userName: me.data().name
+          }),
+        })
+        .then(() => {
+          console.log('Friend list updated!(Friend)')
+        });
 
-    // update my friend list
-    await firestore()
-    .doc(`users/${auth}`)
-    .update({
-      friends: firestore.FieldValue.arrayUnion(friendId),
-    })
-    .then(() => {
-      console.log('Friend list updated!')
-    });
+      return navigation.navigate('Dash');
 
-
-    // update other person friend list
-    await firestore()
-    .doc(`users/${friendId}`)
-    .update({
-      friends: firestore.FieldValue.arrayUnion(auth),
-    })
-    .then(() => {
-      console.log('Friend list updated!')
-    });
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   return (
     <>
-    <Text style={styles.title}>Add new friends by entering their userid:</Text>
-    <TextInput
-      maxLength={40}
-      onChangeText={setFriendId}
-    />
+      <Text style={styles.title}>Add new friends by entering their userid:</Text>
+      <TextInput
+        maxLength={40}
+        onChangeText={setFriendId}
+      />
 
 
-    <Button
+      <Button
         title="Add friend"
         onPress={handleSubmit}
       />
-    <Button
+      <Button
         title="Go to Dash"
         onPress={() => navigation.navigate('Dash')}
       />
@@ -123,10 +102,10 @@ const AddFriend = ({ navigation, auth }) => {
 
 const styles = StyleSheet.create({
   title: {
-      fontSize: 20
+    fontSize: 20
   },
   header: {
-      fontSize: 28,
+    fontSize: 28,
   }
 })
 

@@ -1,5 +1,5 @@
 import React, { useState} from 'react';
-import Example from './ChatBox';
+import ChatBox from './ChatBox';
 import MessagesScreen from './messagesScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 import NearbyList from './NearbyList';
@@ -16,8 +16,8 @@ const StackNavigator2 = ({auth}) => {
             {(props) => <MessagesScreen {...props} auth={auth} />}
         </Stack.Screen>
         <Stack.Screen
-          name="Example"
-          component={Example}
+          name="ChatBox"
+          component={ChatBox}
           options={({route}) => ({
              title: route.params.userName,
              headerBackTitleVisible: false,

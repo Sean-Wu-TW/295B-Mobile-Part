@@ -13,7 +13,7 @@
  import LoginForm from './src/component/login';
  import Dash from './src/component/dash';
  import NearbyList from './src/component/NearbyList';
- import Example from './src/component/ChatBox';
+ import ChatBox from './src/component/ChatBox';
  import useToken from './src/auth/useToken';
  import MessagesScreen from './src/component/messagesScreen';
  import { NavigationContainer } from '@react-navigation/native';

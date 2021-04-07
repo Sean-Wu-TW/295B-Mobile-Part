@@ -3,7 +3,7 @@ import { GiftedChat } from 'react-native-gifted-chat';
 import { Button } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
-const Example = ({ navigation, route}) => {
+const ChatBox = ({ navigation, route}) => {
 
   const [state, setState] = useState({ messages: [] });
   const whoami = route.params.auth;
@@ -49,18 +49,19 @@ const Example = ({ navigation, route}) => {
     .collection('chat')
     .doc(talkingTo)
     .collection('messages')
+    .orderBy("createdAt","desc")
     .onSnapshot(documentSnapshot => {
       let toAppend = [];
       documentSnapshot.forEach(msg => {
         // console.log(parseMsg(msg.data()));
         toAppend.push(parseMsg(msg.data()));
       });
-      toAppend.sort(function(a,b){
-        // https://stackoverflow.com/questions/10123953/how-to-sort-an-object-array-by-date-property
-        // Turn your strings into dates, and then subtract them
-        // to get a value that is either negative, positive, or zero.
-        return new Date(b.createdAt) - new Date(a.createdAt);
-      });
+      // toAppend.sort(function(a,b){
+      //   // https://stackoverflow.com/questions/10123953/how-to-sort-an-object-array-by-date-property
+      //   // Turn your strings into dates, and then subtract them
+      //   // to get a value that is either negative, positive, or zero.
+      //   return new Date(b.createdAt) - new Date(a.createdAt);
+      // });
       setState({ messages: toAppend});
     });
 
@@ -127,4 +128,4 @@ const Example = ({ navigation, route}) => {
     )
 }
 
-export default Example;
+export default ChatBox;
