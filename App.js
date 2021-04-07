@@ -30,7 +30,7 @@
  
  
  const App: () => React$Node = () => {
-   const [auth, setAuth] = useState('adminid');
+   const [auth, setAuth] = useToken('');
  
    // const Stack = createStackNavigator();
  
