@@ -23,8 +23,7 @@
  // import Icon from 'react-native-vector-icons/Ionicons';
  import Icon from 'react-native-vector-icons/SimpleLineIcons';
  // import database from '@react-native-firebase/database';
- import {StackNavigator2, NearbyStackNavigator} from './src/component/StackNavigator';
- // import {NearbyStackNavigator} from './src/component/NearbyStackNavigator';
+ import {ChatStackNavigator, DashStackNavigator, NearbyStackNavigator, SettingsStackNavigator} from './src/component/StackNavigator';
  
  
  
@@ -52,13 +51,9 @@
                  tabBarIcon: () => (
                    <Icon name="people" size={22} />
                  ),
-               }}
-               children={()=>
-                 <Dash
-                   setAuth={setAuth}
-                   auth={auth} />
-                 } 
-             />
+               }}>
+                {(props) => < DashStackNavigator {...props} setAuth={setAuth} auth={auth}/>}
+               </Tab.Screen>
  
              <Tab.Screen 
                name="Message Screen"
@@ -69,7 +64,7 @@
                    <Icon name="bubbles" size={22} />
                  ),
                }}>
-               {(props) => < StackNavigator2 {...props} auth={auth}/>}
+               {(props) => < ChatStackNavigator {...props} auth={auth}/>}
              </Tab.Screen>
              <Tab.Screen
                name="Nearby List"
@@ -90,12 +85,9 @@
                  tabBarIcon: () => (
                    <Icon name="settings" size={22} />
                  ),
-               }}
-               children={()=>
-                 <AddFriend
-                   auth={auth} />
-               }
-             />
+               }}>
+                  {(props) => < SettingsStackNavigator {...props} auth={auth}/>}
+               </Tab.Screen>
            </Tab.Navigator>
          </NavigationContainer>
  
