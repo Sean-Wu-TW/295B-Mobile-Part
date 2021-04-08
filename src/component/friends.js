@@ -1,7 +1,7 @@
 import React, { useEffect, useState} from 'react';
 import users from '../service/users.js';
 import firestore from '@react-native-firebase/firestore';
-import { StyleSheet, FlatList } from 'react-native';
+import { StyleSheet, FlatList, Button, CheckBox, Text } from 'react-native';
 import {
   Container,
   Card,
@@ -15,22 +15,31 @@ import {
   TextSection,
 } from '../styles/messageStyles';
 
+const CURRENT_STATE_CHAT = 'chat';
+const CURRENT_STATE_GROUP_CHAT = 'group_chat';
+
 const Friends = ({ navigation, route}) => {
     const [friends, setFriends] = useState([]);
+    const [selectedFriends, setSelectedFriends] = useState([]);
+    const [currentState, setCurrentState] = useState(CURRENT_STATE_CHAT);
+
     let auth = route.params.auth;
     let currentUser;
-    console.log("@@@@@@@@@@@@@@@@@@@@@@@", route.params.auth);
-    console.log("$$$$$$$$$$$$$$$$$$$$$$$$", route.params.useage);
 
     const loadAllFriends = async () => {
+      console.log('lllll');
       users.getUser(auth).then(user => {
+        console.log('hahahah');
         currentUser = user;
-        let friends = user.friends;
-        console.log("setting friends", friends);
-        setFriends(friends);
+        let newFriends = user.friends;
+        if (friends.length == newFriends.length) {
+          return;
+        }
+        setFriends(newFriends);
+        friends.forEach((friend, index) => {selectedFriends[index] = false});
+        setSelectedFriends(selectedFriends);
       })
     }
-
 
     const navigateToChat = (userName, userId, chatId) => {
       console.log("click friend", userName, userId, auth, chatId);
@@ -38,6 +47,9 @@ const Friends = ({ navigation, route}) => {
     }
     
     const pressFriend = async (userName, userId, chatId, avatar, friendIndex) => {
+      if (currentState == CURRENT_STATE_GROUP_CHAT) {
+        return;
+      }
       if (chatId) {
         navigateToChat(userName, userId, chatId);
       } else {
@@ -115,9 +127,29 @@ const Friends = ({ navigation, route}) => {
       }
     }
 
-    //setFriends(user.friends)
+    const pressButton = (prevState) => {
+      if (currentState == CURRENT_STATE_CHAT) {
+        setCurrentState(CURRENT_STATE_GROUP_CHAT);
+      } else {
+        setCurrentState(CURRENT_STATE_CHAT);
+      }
+    }
 
-    useEffect(() => {loadAllFriends()});
+    const select = (index) => {
+      console.log("before", index, selectedFriends[index]);
+      let selected = [...selectedFriends];
+      selected[index] = !selected[index];
+      setSelectedFriends(selected);
+      console.log("after", index, selectedFriends[index]);
+      console.log(selectedFriends);
+    }
+    
+    console.log(123456)
+    // setFriends(user.friends)
+    loadAllFriends();
+    // useEffect(() => {loadAllFriends()});
+    // useEffect(() => {}, [])
+
 
     return (
         <Container>
@@ -125,23 +157,25 @@ const Friends = ({ navigation, route}) => {
             data={friends}
             keyExtractor={item=> item.userId}
             renderItem={({item, index}) => (
-
               <Card onPress={() => {
                 pressFriend(item.userName, item.userId, item.chatId, item.avatar, index);
               }}>
                 <UserInfo>
+                  <CheckBox value={selectedFriends[index]} onValueChange={() => {select(index)}}></CheckBox>
+                  <Text>x{index}x{selectedFriends[index].toString()}xx</Text>
                   <UserImgWrapper>
                     <UserImg source={{uri: item.avatar}} />
                   </UserImgWrapper>
                   <TextSection>
                     <UserInfoText>
-                      <UserName>{item.userName}</UserName>
+                      <UserName>{item.userName} {selectedFriends[index]}</UserName>
                     </UserInfoText>
                   </TextSection>
                 </UserInfo>
               </Card>
             )}
           />
+          <Button title={currentState == CURRENT_STATE_CHAT ? 'create group chat':'start chat'} onPress={pressButton}></Button>
         </Container>
       );
 }
