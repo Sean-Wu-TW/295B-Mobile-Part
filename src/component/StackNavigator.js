@@ -18,14 +18,6 @@ const DashStackNavigator = ({auth, setAuth}) => {
           {(props) => <Dash {...props} auth={auth} setAuth={setAuth}
           />}
       </Stack.Screen>
-      <Stack.Screen
-          name="Example"
-          component={Example}
-          options={({route}) => ({
-             title: route.params.userName,
-             headerBackTitleVisible: false,
-           })}>
-      </Stack.Screen>
     </Stack.Navigator>
   );
 }
