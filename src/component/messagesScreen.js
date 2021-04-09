@@ -66,7 +66,7 @@ const MessagesScreen = ({navigation, auth}) => {
         }
       });
     firestore().collection('users').doc(auth).update({chats}).then(()=> {
-      navigation.navigate('Example', {userName, userId, auth, chatId});
+      navigation.navigate('ChatBox', {userName, userId, auth, chatId});
     });
   }
 
