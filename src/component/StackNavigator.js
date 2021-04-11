@@ -1,6 +1,7 @@
 import React, { useState} from 'react';
 import ChatBox from './ChatBox';
 import MessagesScreen from './messagesScreen';
+import Friends from './friends';
 import { createStackNavigator } from '@react-navigation/stack';
 import Dash from './dash';
 import NearbyList from './NearbyList';
@@ -13,12 +14,25 @@ const Stack = createStackNavigator();
 
 const DashStackNavigator = ({auth, setAuth}) => {
   return (
-    <Stack.Navigator initialRouteName="Dash">
+    <Stack.Navigator initialRouteName="Friends">
       <Stack.Screen
           name="Dash"
           >
           {(props) => <Dash {...props} auth={auth} setAuth={setAuth}
           />}
+      </Stack.Screen>
+      <Stack.Screen
+          name="Friends">
+             {(props) => <Friends {...props} auth={auth} setAuth={setAuth}
+          />}
+      </Stack.Screen>
+      <Stack.Screen
+          name="ChatBox"
+          component={ChatBox}
+          options={({route}) => ({
+             title: route.params.userName,
+             headerBackTitleVisible: false,
+           })}>
       </Stack.Screen>
     </Stack.Navigator>
   );

@@ -118,7 +118,10 @@ import Signup from './src/component/Signup';
              component={NearbyList}
            >
            </Stack.Screen> */
- 
+          /* <Stack.Screen 
+           name="Friends" component={Friends}
+         >
+         </Stack.Screen> */
          /* </Stack.Navigator>
        </NavigationContainer> */
         : 
@@ -173,4 +176,3 @@ import Signup from './src/component/Signup';
  });
  
  export default App;
- 
