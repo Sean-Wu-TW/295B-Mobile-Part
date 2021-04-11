@@ -22,20 +22,20 @@ const NearbyList = ({auth}) => {
     }, [location]);
 
     const saveUserLocation = async() => {
-    const hash = geofire.geohashForLocation([location.latitude, location.longitude]);
-    // const newLocation = {
-    //   geohash: hash,
-    //   latitude: location.latitude,
-    //   longitude: location.longitude
-    // }
-    const users = await firestore()
-        .collection('users')
-        .doc(auth)
-        .update({
-        geohash: hash,
-        latitude: location.latitude,
-        longitude: location.longitude
-        });
+        const hash = geofire.geohashForLocation([location.latitude, location.longitude]);
+        // const newLocation = {
+        //   geohash: hash,
+        //   latitude: location.latitude,
+        //   longitude: location.longitude
+        // }
+        const users = await firestore()
+            .collection('users')
+            .doc(auth)
+            .update({
+            geohash: hash,
+            latitude: location.latitude,
+            longitude: location.longitude
+            });
     }
 
     const exploreNearby = async() => {

@@ -126,7 +126,6 @@ const Signup = ({ navigation }) => {
             
             <Button title="Sign up" onPress={handleSubmit}></Button> 
             <Button title="Back to Login" onPress={() => navigation.navigate('LoginForm')}></Button> 
-            {/* navigation.navigate('LoginForm'); */}
             
         </View>
         </>

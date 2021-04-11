@@ -23,7 +23,8 @@
  // import Icon from 'react-native-vector-icons/Ionicons';
  import Icon from 'react-native-vector-icons/SimpleLineIcons';
  // import database from '@react-native-firebase/database';
- import {ChatStackNavigator, DashStackNavigator, NearbyStackNavigator, SettingsStackNavigator} from './src/component/StackNavigator';
+ import {ChatStackNavigator, DashStackNavigator, NearbyStackNavigator, SettingsStackNavigator, LoginStackNavigator} from './src/component/StackNavigator';
+import Signup from './src/component/Signup';
  
  
  
@@ -31,7 +32,7 @@
  const App: () => React$Node = () => {
    const [auth, setAuth] = useToken('');
  
-   // const Stack = createStackNavigator();
+   const Stack = createStackNavigator();
  
    const Tab = createMaterialBottomTabNavigator();
  
@@ -120,7 +121,11 @@
  
          /* </Stack.Navigator>
        </NavigationContainer> */
-        : <LoginForm setAuth={setAuth}/>}
+        : 
+        <NavigationContainer>
+            <LoginStackNavigator setAuth={setAuth} />
+        </NavigationContainer>
+        }
      </>
    );
  };
