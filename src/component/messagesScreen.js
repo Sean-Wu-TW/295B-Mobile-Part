@@ -92,7 +92,9 @@ const MessagesScreen = ({navigation, auth}) => {
               userName: data.isGroupChat? data.name: data.members.find(member=> member.memberId.id != auth).name,
               messageTime: data.lastMessage?.toDate().toDateString(),
               userImage: data.isGroupChat? 'asset:/user-6.jpg': data.members.find(member=> member.memberId.id != auth).avatar,
+              messageText: data.unread > 0 ?  (data.unread > 1 ? `{data.unread} new messages`: `{data.unread} new message`) : 'no new messages'
             };
+            console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%", chatItem);
             toAppend.push(chatItem);
           },err => {
             console.log(error);

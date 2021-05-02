@@ -10,6 +10,8 @@ export const Container = styled.View`
 
 export const Card = styled.TouchableOpacity`
   width: 100%;
+  border-bottom-width: 1px;
+  border-bottom-color: #cccccc;
 `;
 
 export const UserInfo = styled.View`
@@ -35,8 +37,6 @@ export const TextSection = styled.View`
   padding-left: 0;
   margin-left: 10px;
   width: 300px;
-  border-bottom-width: 1px;
-  border-bottom-color: #cccccc;
 `;
 
 export const UserInfoText = styled.View`
@@ -46,7 +46,7 @@ export const UserInfoText = styled.View`
 `;
 
 export const UserName = styled.Text`
-  font-size: 14px;
+  font-size: 20px;
   font-weight: bold;
   font-family: 'Lato-Regular';
 `;

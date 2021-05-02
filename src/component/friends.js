@@ -250,4 +250,13 @@ const Friends = ({navigation, auth}) => {
       );
 }
 
+const styles = StyleSheet.create({
+  title: {
+      fontSize: 20
+  },
+  header: {
+      fontSize: 28,
+  }
+})
+
 export default Friends;

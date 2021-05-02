@@ -1,6 +1,7 @@
 import React, { useEffect, useState} from 'react';
 import { GiftedChat } from 'react-native-gifted-chat';
-import { Button } from 'react-native';
+import { Button, View } from 'react-native';
+import {Container} from '../styles/messageStyles';
 import firestore from '@react-native-firebase/firestore';
 import users from '../service/users.js';
 
@@ -208,19 +209,16 @@ const ChatBox = ({ navigation, route}) => {
   } 
 
     return (
-      <>
-      <Button
-        title="Go to Dash"
-        onPress={() => navigation.navigate('Dash')}
-      />
+      <View style={{flex:1, backgroundColor:'#ffffff'}}>
       <GiftedChat
         messages={state.messages}
         onSend={([msg]) => onSendV2(msg)}
+        style={{ backgroundColor: "#ffffff", flex: 1 }}
         user={{
           _id: 1,
         }}
       />
-      </>
+      </View>
     )
 }
 
