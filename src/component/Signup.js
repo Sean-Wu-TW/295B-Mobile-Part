@@ -82,6 +82,18 @@ const Signup = ({ navigation }) => {
 
 
         if(formAuth()){
+            firestore()
+            .collection('users')
+            .add({
+              name: name,
+              email: email,
+              password: password,
+              userid: userid,
+
+            })
+            .then(() => {
+              console.log('User added!');
+            });
             console.log('good');
         }else{
             console.log('bad');
@@ -101,7 +113,7 @@ const Signup = ({ navigation }) => {
                 maxLength={40}
                 onChangeText={setName}
             />
-            <Text style={styles.title}>User Name:</Text>
+            <Text style={styles.title}>User ID:</Text>
             <TextInput
                 maxLength={40}
                 onChangeText={setUserid}
@@ -125,7 +137,7 @@ const Signup = ({ navigation }) => {
             />
             
             <Button title="Sign up" onPress={handleSubmit}></Button> 
-            <Button title="Back to Login" onPress={() => navigation.navigate('LoginForm')}></Button> 
+            <Button title="Back to Login" onPress={() => navigation.navigate('Login')}></Button> 
             
         </View>
         </>
