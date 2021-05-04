@@ -82,19 +82,20 @@ const Signup = ({ navigation }) => {
 
 
         if(formAuth()){
-            firestore()
+            await firestore()
             .collection('users')
-            .add({
+            .doc(userid)
+            .set({
               name: name,
               email: email,
               password: password,
               userid: userid,
-
             })
             .then(() => {
               console.log('User added!');
             });
             console.log('good');
+            navigation.navigate('Login');
         }else{
             console.log('bad');
         }
