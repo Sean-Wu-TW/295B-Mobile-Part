@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { View, TextInput, Text, Button, StyleSheet, StatusBar, SafeAreaView, FlatList, TouchableOpacity, Alert } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import MapView from 'react-native-maps';
-import { Marker } from 'react-native-maps';
+import { Marker, Callout} from 'react-native-maps';
 import { Toolbar, ToolbarBackAction, ToolbarContent, ToolbarAction } from 'react-native-paper';
 import Slider from '@react-native-community/slider'; 
+import AddFriend from './addFriend'
+
 navigator.geolocation = require('@react-native-community/geolocation');
 const geofire = require('geofire-common');
 
@@ -13,6 +15,7 @@ const NearbyList = ({auth}) => {
     const [markers, setMarkers] = useState([]);
     const [location, setLocation] = useState({});
     const [distance, setDistance] = useState(10);
+    const [friendId, setFriendId] = useState('');
 
     useEffect(() => {
     if (location.latitude) {
@@ -21,8 +24,15 @@ const NearbyList = ({auth}) => {
     }
     }, [location]);
 
+    useEffect(() => {
+        if (friendId) {
+            handleSubmit();
+        }
+    })
+
     const saveUserLocation = async() => {
-        const hash = geofire.geohashForLocation([location.latitude, location.longitude]);
+        //const hash = geofire.geohashForLocation([location.latitude, location.longitude]);
+        const hash = geofire.geohashForLocation([37.423998333333335, -122.08300000000002]);
         // const newLocation = {
         //   geohash: hash,
         //   latitude: location.latitude,
@@ -33,8 +43,10 @@ const NearbyList = ({auth}) => {
             .doc(auth)
             .update({
             geohash: hash,
-            latitude: location.latitude,
-            longitude: location.longitude
+            // latitude: location.latitude,
+            // longitude: location.longitude
+            latitude: 37.423998333333335,
+            longitude: -122.08300000000002
             });
     }
 
@@ -43,7 +55,6 @@ const NearbyList = ({auth}) => {
     // Find nearby users within 5km of the current user location
     const center = [location.latitude, location.longitude];
     const radiusInM = distance * 1000;
-    console.log(distance);
     // Each item in 'bounds' represents a startAt/endAt pair. We have to issue
     // a separate query for each pair. There can be up to 9 pairs of bounds
     // depending on overlap, but in most cases there are 4.
@@ -87,7 +98,8 @@ const NearbyList = ({auth}) => {
                 latitude: matchingDoc['_data']['latitude'],
                 longitude: matchingDoc['_data']['longitude']
                 },
-                title: matchingDoc['_data']['name']
+                title: matchingDoc['_data']['name'],
+                userId: matchingDoc['_data']['userid']
             }]
             );
         }
@@ -116,6 +128,81 @@ const NearbyList = ({auth}) => {
     const clearMarkers = () => {
         setMarkers([]);
     }
+
+    const handleSubmit = async (userid) => {
+        console.log(friendId);
+        try {
+          // search users list for user & extract info...
+        //   console.log(friendId)
+          const user = await firestore()
+            .collection('users')
+            .doc(friendId)
+            .get();
+    
+          // case if user does not exist
+          if (!user.exists) {
+            Alert.alert(
+              "User does not exist",
+              "",
+              [
+                {
+                  text: "Cancel",
+                  onPress: () => { },
+                  style: "cancel"
+                },
+                {
+                  text: "OK",
+                  onPress: () => { }
+                }
+              ],
+              { cancelable: false }
+            );
+            return 
+          }
+    
+          const me = await firestore()
+            .collection('users')
+            .doc(auth)
+            .get();
+    
+            console.log('anything')
+          // update my friend list
+          await firestore()
+            .doc(`users/${auth}`)
+            .update({
+              friends: firestore.FieldValue.arrayUnion({
+                avatar: user.data().avatar,
+                userId: user.data().userid,
+                userName: user.data().name
+              }),
+            })
+            .then(() => {
+              console.log('Friend list updated!')
+            });
+    
+    
+          // update other person friend list
+          await firestore()
+            .doc(`users/${friendId}`)
+            .update({
+              friends: firestore.FieldValue.arrayUnion({
+                avatar: me.data().avatar,
+                userId: me.data().userid,
+                userName: me.data().name
+              }),
+            })
+            .then(() => {
+              console.log('Friend list updated!(Friend)')
+            });    
+        } catch (e) {
+          console.log(e);
+        }
+      }
+
+      const updateFriendId = (userId) => {
+          setFriendId(userId)
+      }
+        
 
 
     return (
@@ -192,12 +279,41 @@ const NearbyList = ({auth}) => {
             toolbarEnabled={true}
             zoomControlEnabled={true}
         >
-        {markers.map((marker, index) => (
+        {   markers.map((marker, index) => (
             <Marker
             key={index}
             coordinate={marker.latlng}
+            icon={require('../img/marker.png')}
             title={marker.title}
-            />
+            description={'Click to add as friend'}
+            onCalloutPress={() => {updateFriendId(marker.userId)}}
+            // onPress={ (e) => updateFriendId(marker.userId)}
+            >
+                <Callout>
+                    <View style={styles.bubble}>
+                        <Text style={styles.name}>{marker.title}</Text>
+                        <Text>Add as friend</Text>
+                        {/* <TouchableOpacity 
+                            key='add'
+                            onPress={ () => {alert('alert')}} 
+                            style={[
+                            styles.button
+                        ]}>
+                            <Text
+                                style={[
+                                styles.buttonLabel
+                            ]}>
+                                Add Friend
+                            </Text>
+                        </TouchableOpacity> */}
+                        {/* <Button
+                        title='add'
+                        onPress={ () => {alert('alert')} } >
+                            Add
+                        </Button> */}
+                    </View>
+                </Callout>
+            </Marker>
             ))}
         </MapView>
         </View>
@@ -210,6 +326,20 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 8,
     backgroundColor: "aliceblue",
+    },
+    bubble: {
+        flexDirection: 'column',
+        alignSelf: 'flex-start',
+        backgroundColor: '#fff',
+        borderRadius: 6,
+        borderColor: '#ccc',
+        borderWidth: 0.5,
+        padding: 15,
+        width: 150,
+    },
+    name: {
+        fontSize: 26,
+        marginBottom: 5,
     },
     box: {
     width: 50,
