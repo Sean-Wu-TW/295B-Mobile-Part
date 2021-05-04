@@ -26,24 +26,13 @@ const Dash = ({ setAuth, navigation, auth }) => {
   useEffect(() => {
   }, [])
   return (
-    <>
-    <Text> You're In!</Text>
-    <Text> You are {auth}</Text>
+    <View style={styles.bottom}>
     <Button
-        title="Go to addFriend"
-        onPress={() => navigation.navigate('Add Friend')}
+        title="Add friend"
+        onPress={() => navigation.navigate('AddFriend')}
       />
-    <Button
-        title="Friends"
-        onPress={() => navigation.navigate('Friends', {auth, useage:"listUser"})}
-      />
-    <Button title="Log Out" onPress={handleAuth}></Button>
-
-    <TouchableOpacity onPress={findCoordinates}>
-					<Text style={styles.welcome}>Find My Coords?</Text>
-					<Text>Location: {location}</Text>
-				</TouchableOpacity>
-    </>
+    <Button title="Log Out" onPress={handleAuth} color="red"></Button>
+    </View>
   );
 }
 
@@ -57,6 +46,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: StatusBar.currentHeight || 0,
+  },
+  bottom: {
+    flex: 1,
+    justifyContent:  'flex-end'
   },
   item: {
     backgroundColor: '#f9c2ff',

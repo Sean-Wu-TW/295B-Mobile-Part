@@ -89,12 +89,13 @@ const AddFriend = ({ navigation, auth }) => {
 
 
       <Button
-        title="Add friend"
+        title="Add"
+        color="green"
         onPress={handleSubmit}
       />
       <Button
-        title="Go to Dash"
-        onPress={() => navigation.navigate('Dash')}
+        title="Cancle"
+        onPress={() => navigation.navigate('Settings')}
       />
     </>
   );

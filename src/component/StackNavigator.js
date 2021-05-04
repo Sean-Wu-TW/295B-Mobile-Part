@@ -77,6 +77,10 @@ const SettingsStackNavigator = ({auth}) => {
       <Stack.Navigator initialRouteName="Settings Screen">
         <Stack.Screen
             name="Settings">
+            {(props) => <Dash {...props} auth={auth} />}
+        </Stack.Screen>
+        <Stack.Screen
+            name="AddFriend">
             {(props) => <AddFriend {...props} auth={auth} />}
         </Stack.Screen>
       </Stack.Navigator>
