@@ -8,6 +8,7 @@ import NearbyList from './NearbyList';
 import AddFriend from './addFriend';
 import LoginForm from './login';
 import Signup from './Signup';
+import ScoreScreen from './ScoreScreen';
 
 
 const Stack = createStackNavigator();
@@ -82,6 +83,11 @@ const SettingsStackNavigator = ({auth}) => {
         <Stack.Screen
             name="AddFriend">
             {(props) => <AddFriend {...props} auth={auth} />}
+        </Stack.Screen>
+
+        <Stack.Screen
+          name="ScoreScreen">
+            {(props) => <ScoreScreen {...props} auth={auth} />}
         </Stack.Screen>
       </Stack.Navigator>
     );

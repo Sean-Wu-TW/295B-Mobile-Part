@@ -4,7 +4,6 @@ import firestore from '@react-native-firebase/firestore';
 
 const AddFriend = ({ navigation, auth }) => {
   const [friendId, setFriendId] = useState('');
-  console.log(auth);
   useEffect(() => {
     console.log(friendId);
   }, [friendId])
@@ -96,6 +95,10 @@ const AddFriend = ({ navigation, auth }) => {
       <Button
         title="Cancle"
         onPress={() => navigation.navigate('Settings')}
+      />
+      <Button
+        title="Go to Score"
+        onPress={() => navigation.navigate('ScoreScreen')}
       />
     </>
   );
