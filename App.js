@@ -25,6 +25,7 @@
  // import database from '@react-native-firebase/database';
  import {ChatStackNavigator, DashStackNavigator, NearbyStackNavigator, SettingsStackNavigator, LoginStackNavigator} from './src/component/StackNavigator';
 import Signup from './src/component/Signup';
+import ScoreScreen from './src/component/ScoreScreen';
  
  
  
