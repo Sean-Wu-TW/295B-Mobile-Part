@@ -31,19 +31,19 @@ const NearbyList = ({auth}) => {
     }, [friendId])
 
     const saveUserLocation = async() => {
-        // const hash = geofire.geohashForLocation([location.latitude, location.longitude]);
+        const hash = geofire.geohashForLocation([location.latitude, location.longitude]);
         // for test
-        const hash = geofire.geohashForLocation([37.231998333333335, -122.23100000000002]);
+        // const hash = geofire.geohashForLocation([37.231998333333335, -122.23100000000002]);
         const users = await firestore()
             .collection('users')
             .doc(auth)
             .update({
             geohash: hash,
-            // latitude: location.latitude,
-            // longitude: location.longitude
+            latitude: location.latitude,
+            longitude: location.longitude
             //For test
-            latitude: 37.231998333333335,
-            longitude: -122.23100000000002
+            // latitude: 37.231998333333335,
+            // longitude: -122.23100000000002
             });
     }
 
@@ -121,10 +121,10 @@ const NearbyList = ({auth}) => {
     const findCoordinates = () => {
         navigator.geolocation.getCurrentPosition(
           position => {
-            // const location = JSON.stringify(position);        
-            // setLocation({latitude: position['coords']['latitude'], longitude: position['coords']['longitude']});
+            const location = JSON.stringify(position);        
+            setLocation({latitude: position['coords']['latitude'], longitude: position['coords']['longitude']});
             // for test
-            setLocation({latitude: 37.231998333333335, longitude: -122.23100000000002});
+            // setLocation({latitude: 37.231998333333335, longitude: -122.23100000000002});
           },
           error => Alert.alert(error.message),
           { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
