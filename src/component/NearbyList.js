@@ -31,22 +31,19 @@ const NearbyList = ({auth}) => {
     })
 
     const saveUserLocation = async() => {
-        //const hash = geofire.geohashForLocation([location.latitude, location.longitude]);
-        const hash = geofire.geohashForLocation([37.423998333333335, -122.08300000000002]);
-        // const newLocation = {
-        //   geohash: hash,
-        //   latitude: location.latitude,
-        //   longitude: location.longitude
-        // }
+        const hash = geofire.geohashForLocation([location.latitude, location.longitude]);
+        // for test
+        // const hash = geofire.geohashForLocation([37.423998333333335, -122.08300000000002]);
         const users = await firestore()
             .collection('users')
             .doc(auth)
             .update({
             geohash: hash,
-            // latitude: location.latitude,
-            // longitude: location.longitude
-            latitude: 37.423998333333335,
-            longitude: -122.08300000000002
+            latitude: location.latitude,
+            longitude: location.longitude
+            //For test
+            // latitude: 37.423998333333335,
+            // longitude: -122.08300000000002
             });
     }
 
@@ -130,7 +127,6 @@ const NearbyList = ({auth}) => {
     }
 
     const handleSubmit = async (userid) => {
-        console.log(friendId);
         try {
           // search users list for user & extract info...
         //   console.log(friendId)
