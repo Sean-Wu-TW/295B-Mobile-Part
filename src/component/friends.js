@@ -1,6 +1,6 @@
 import React, { useEffect, useState} from 'react';
 import users from '../service/users.js';
-import firestore from '@react-native-firebase/firestore';
+import firestore, { firebase } from '@react-native-firebase/firestore';
 import { StyleSheet, FlatList, Button, CheckBox, Text, TextInput } from 'react-native';
 import {
   Container,
@@ -25,20 +25,20 @@ const Friends = ({navigation, auth}) => {
     const [currentState, setCurrentState] = useState(CURRENT_STATE_CHAT);
     const [selectedCount, setSelectedCount] = useState(0);
 
-
-    console.log('hahaha');
-
     let currentUser;
 
-    const loadAllFriends = async () => {
-      console.log('loading friends');
-      users.getUser(auth).then(user => {
+    const loadAllFriends = () => {
+      firestore()
+      .collection('users')
+      .doc(auth)
+      .onSnapshot(data => {
+        let user = data.data();
         currentUser = user;
         let newFriends = user.friends;
         if (newFriends == null || (friends.length == newFriends.length)) {
           return;
         }
-        console.log('updating friends');
+        
         setFriends(newFriends);
         friends.forEach((friend, index) => {selectedFriends[index] = false});
         setSelectedFriends(selectedFriends);
@@ -212,8 +212,8 @@ const Friends = ({navigation, auth}) => {
     
     console.log(123456)
     // setFriends(user.friends)
-    loadAllFriends();
-    // useEffect(() => {loadAllFriends()});
+    // loadAllFriends();
+    useEffect(() => {loadAllFriends()},[]);
     // useEffect(() => {}, [])
 
 
