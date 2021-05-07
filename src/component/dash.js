@@ -31,7 +31,12 @@ const Dash = ({ setAuth, navigation, auth }) => {
         title="Add friend"
         onPress={() => navigation.navigate('AddFriend')}
       />
-    <Button title="Log Out" onPress={handleAuth} color="red"></Button>
+    <Button
+        title="Go to Score"
+        onPress={() => navigation.navigate('ScoreScreen')}
+        color="green"
+      />
+    <Button title="Log Out" onPress={handleAuth} color="red"/>
     </View>
   );
 }

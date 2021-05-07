@@ -91,8 +91,9 @@ const MessagesScreen = ({navigation, auth}) => {
               chatId: chtRef.id,
               userName: data.isGroupChat? data.name: data.members.find(member=> member.memberId.id != auth).name,
               messageTime: data.lastMessage?.toDate().toDateString(),
-              userImage: data.isGroupChat? 'asset:/user-6.jpg': data.members.find(member=> member.memberId.id != auth).avatar,
-              messageText: data.unread > 0 ?  (data.unread > 1 ? `{data.unread} new messages`: `{data.unread} new message`) : 'no new messages'
+              userImage: data.isGroupChat? 'https://picsum.photos/200': (data.members.find(member=> member.memberId.id != auth).avatar || 'https://picsum.photos/200'),
+              messageText: data.unread > 0 ?  (data.unread > 1 ? `{data.unread} new messages`: `{data.unread} new message`) : 'no new messages',
+              isGroupChat: data.isGroupChat
             };
             console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%", chatItem);
             toAppend.push(chatItem);
@@ -127,7 +128,8 @@ const MessagesScreen = ({navigation, auth}) => {
                 </UserImgWrapper>
                 <TextSection>
                   <UserInfoText>
-                    <UserName>{item.userName}</UserName>
+                    {item.isGroupChat ? <UserName>Group: {item.userName}</UserName> : <UserName>{item.userName}</UserName>}
+                    
                     <PostTime>{item.messageTime}</PostTime>
                   </UserInfoText>
                   <MessageText>{item.messageText}</MessageText>

@@ -91,15 +91,13 @@ const AddFriend = ({ navigation, auth }) => {
         title="Add"
         color="green"
         onPress={handleSubmit}
+        disabled={ friendId.length < 1}
       />
       <Button
         title="Cancle"
         onPress={() => navigation.navigate('Settings')}
       />
-      <Button
-        title="Go to Score"
-        onPress={() => navigation.navigate('ScoreScreen')}
-      />
+      
     </>
   );
 }

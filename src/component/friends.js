@@ -19,7 +19,7 @@ const CURRENT_STATE_CHAT = 'chat';
 const CURRENT_STATE_GROUP_CHAT = 'group_chat';
 
 const Friends = ({navigation, auth}) => {
-    const [groupName, onChangeGroupName] = React.useState("group chat name");
+    const [groupName, onChangeGroupName] = React.useState("");
     const [friends, setFriends] = useState([]);
     const [selectedFriends, setSelectedFriends] = useState([]);
     const [currentState, setCurrentState] = useState(CURRENT_STATE_CHAT);
@@ -211,12 +211,9 @@ const Friends = ({navigation, auth}) => {
 
 
     return (
+      <>
         <Container>
-          {currentState == CURRENT_STATE_GROUP_CHAT ?
-          <TextInput
-          onChangeText={onChangeGroupName}
-          value={groupName}
-          /> : null}
+          
           <FlatList 
             data={friends}
             keyExtractor={item=> item.userId}
@@ -224,9 +221,9 @@ const Friends = ({navigation, auth}) => {
               <Card onPress={() => {
                 pressFriend(item.userName, item.userId, item.chatId, item.avatar, index);
               }}>
-                <UserInfo>
+                <UserInfo style={styles.userInfo}>
                   {
-                    currentState == CURRENT_STATE_GROUP_CHAT ? <CheckBox value={selectedFriends[index]} onValueChange={() => {select(index)}}></CheckBox>
+                    currentState == CURRENT_STATE_GROUP_CHAT ? <CheckBox style={styles.checkBox} value={selectedFriends[index]} onValueChange={() => {select(index)}}></CheckBox>
                     : null
                   }
                   <UserImgWrapper>
@@ -241,12 +238,19 @@ const Friends = ({navigation, auth}) => {
               </Card>
             )}
           />
+          </Container>
+          {currentState == CURRENT_STATE_GROUP_CHAT ?
+          <TextInput
+          onChangeText={onChangeGroupName}
+          placeholder='please enter a group chat name'
+          value={groupName}
+          /> : null}
           { currentState == CURRENT_STATE_CHAT ?
-            <Button title='create group chat' onPress={startSelection}></Button>
-            : <><Button title='start chat' disabled={selectedCount <= 1} onPress={pressStartGroupChat}></Button>
+            <Button title='create group chat' onPress={startSelection} color="orange"></Button>
+            : <><Button title='start chat' disabled={selectedCount <= 1 && groupName.length > 0} onPress={pressStartGroupChat} color="green"></Button>
               <Button title='cancel' onPress={cancleSelection}></Button></>
           }
-        </Container>
+        </>
       );
 }
 
@@ -256,6 +260,13 @@ const styles = StyleSheet.create({
   },
   header: {
       fontSize: 28,
+  },
+  userInfo: {
+    display: 'flex'
+  },
+  checkBox: {
+    marginTop: 25,
+    marginRight: 10
   }
 })
 

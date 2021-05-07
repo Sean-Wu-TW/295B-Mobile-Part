@@ -33,7 +33,7 @@ const ScoreScreen = ({ navigation, auth }) => {
         <Text style={styles.teamScore}>{forgeryLosses}</Text>
       </View>
     </View>
-    <TouchableOpacity 
+    {/* <TouchableOpacity style={styles.button}
                 key='Explore'
                 onPress={updateScore}
                 style={[
@@ -45,7 +45,10 @@ const ScoreScreen = ({ navigation, auth }) => {
                 ]}>
                 Update Score
                 </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
+            <Button title="update score" color="orange" onPress={updateScore}>
+
+            </Button>
         </>
     );
 }
