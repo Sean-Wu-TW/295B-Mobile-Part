@@ -79,6 +79,10 @@ const ChatBox = ({ navigation, route}) => {
       let toAppend = [];
       let data = snapShot.data();
       let messages = data.messages;
+      
+      if (messages == null || messages.length == 0) {
+        return;
+      }
       let count = messages.length;
       messages.forEach(messageRef => messageRef.get().then(message => {
         let msgData = message.data();

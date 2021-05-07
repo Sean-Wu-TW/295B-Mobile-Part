@@ -25,20 +25,27 @@ const Friends = ({navigation, auth}) => {
     const [currentState, setCurrentState] = useState(CURRENT_STATE_CHAT);
     const [selectedCount, setSelectedCount] = useState(0);
 
+
+    console.log('hahaha');
+
     let currentUser;
 
     const loadAllFriends = async () => {
+      console.log('loading friends');
       users.getUser(auth).then(user => {
         currentUser = user;
         let newFriends = user.friends;
-        if (friends.length == newFriends.length) {
+        if (newFriends == null || (friends.length == newFriends.length)) {
           return;
         }
+        console.log('updating friends');
         setFriends(newFriends);
         friends.forEach((friend, index) => {selectedFriends[index] = false});
         setSelectedFriends(selectedFriends);
       })
     }
+
+    const componentDidMount = loadAllFriends;
 
     const navigateToChat = (userName, userId, chatId) => {
       console.log("click friend", userName, userId, auth, chatId);
