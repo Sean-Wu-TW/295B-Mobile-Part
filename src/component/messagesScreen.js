@@ -79,6 +79,9 @@ const MessagesScreen = ({navigation, auth}) => {
       .onSnapshot(snapshot => {
         let toAppend = [];
         chats = snapshot.data().chats;
+        if (chats == null || chats.length == 0) {
+          return;
+        }
         let count = chats.length;
         snapshot.data().chats.forEach(chat => {
           console.log('chat$$$$$$$$$$$$$$$$', chat);
