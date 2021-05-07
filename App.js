@@ -88,7 +88,7 @@ import ScoreScreen from './src/component/ScoreScreen';
                    <Icon name="settings" size={22} />
                  ),
                }}>
-                  {(props) => < SettingsStackNavigator {...props} auth={auth}/>}
+                  {(props) => < SettingsStackNavigator {...props} setAuth={setAuth} auth={auth}/>}
                </Tab.Screen>
            </Tab.Navigator>
          </NavigationContainer>

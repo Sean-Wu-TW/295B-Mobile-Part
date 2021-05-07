@@ -72,13 +72,13 @@ const NearbyStackNavigator = ({auth}) => {
     );
 }
 
-const SettingsStackNavigator = ({auth}) => {
+const SettingsStackNavigator = ({auth, setAuth}) => {
   // console.log(auth)
   return (
       <Stack.Navigator initialRouteName="Settings Screen">
         <Stack.Screen
             name="Settings">
-            {(props) => <Dash {...props} auth={auth} />}
+            {(props) => <Dash {...props} auth={auth} setAuth={setAuth} />}
         </Stack.Screen>
         <Stack.Screen
             name="AddFriend">

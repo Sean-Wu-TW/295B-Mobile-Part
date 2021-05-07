@@ -9,6 +9,7 @@ const Signup = ({ navigation }) => {
     const [passwordConfirm, setpasswordConfirm] = useState('');
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
+    const [valid, setValid] = useState(false);
 
     const formAuth = () => {
         // if passwords does not match
@@ -52,6 +53,10 @@ const Signup = ({ navigation }) => {
         } else {
             return true;
         }
+    }
+
+    const updateValidData = () => {
+      setValid(userid.length && password.length ** passwordConfirm.length && password == passwordConfirm && name.length);
     }
     
     const handleSubmit = async () => {
@@ -112,32 +117,38 @@ const Signup = ({ navigation }) => {
             <Text style={styles.title}>What's your name:</Text>
             <TextInput
                 maxLength={40}
-                onChangeText={setName}
+                onChangeText={name => {setName(name); updateValidData()}}
+                style={styles.input}
             />
             <Text style={styles.title}>User ID:</Text>
             <TextInput
                 maxLength={40}
-                onChangeText={setUserid}
+                onChangeText={uid => {setUserid(uid); updateValidData()}}
+                style={styles.input}
             />
             <Text style={styles.title}>Password:</Text>
             <TextInput
                 maxLength={40}
-                onChangeText={setPassword}
+                onChangeText={pwd => {setPassword(pwd);updateValidData()}}
                 secureTextEntry={true}
+                style={styles.input}
             />
             <Text style={styles.title}>Confirm Password:</Text>
             <TextInput
                 maxLength={40}
-                onChangeText={setpasswordConfirm}
+                onChangeText={pwd => {setpasswordConfirm(pwd), updateValidData()}}
                 secureTextEntry={true}
+                style={styles.input}
             />
             <Text style={styles.title}>Email:</Text>
             <TextInput
                 maxLength={40}
-                onChangeText={setEmail}
+                onChangeText={email => {setEmail(email); updateValidData()}}
+                style={styles.input}
             />
-            
-            <Button title="Sign up" onPress={handleSubmit}></Button> 
+            <View style={styles.button}>
+            <Button title="Sign up" onPress={handleSubmit} color="green" disabled={!valid}></Button> 
+            </View>
             <Button title="Back to Login" onPress={() => navigation.navigate('Login')}></Button> 
             
         </View>
@@ -150,8 +161,19 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 20
     },
+    input: {
+      borderColor: 'black',
+      borderRadius: 5,
+      borderWidth: 1,
+      marginTop: 5,
+      marginBottom: 10
+    },
     header: {
         fontSize: 28,
+    },
+    button: {
+      marginTop: 10,
+      marginBottom: 10
     }
 })
 

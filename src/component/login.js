@@ -47,19 +47,25 @@ const LoginForm = ({ setAuth, navigation }) => {
             <Text style={styles.header}>
                 Please Log in
             </Text>
-            <Text style={styles.title}>User Name:</Text>
+            <Text style={styles.title}>User Id:</Text>
             <TextInput
                 maxLength={40}
                 onChangeText={setUserid}
+                style={styles.inputText}
             />
             <Text style={styles.title}>Password:</Text>
             <TextInput
                 maxLength={40}
                 onChangeText={setpassword}
                 secureTextEntry={true}
+                style={styles.inputText}
             />
-            <Button title="Log in" onPress={LoginApi}></Button>
-            <Button title="Sign up" onPress={() => navigation.navigate('Signup')}></Button>
+            <View style={styles.button}>
+              <Button title="Log in" onPress={LoginApi} color="green"></Button>
+            </View>
+            <View style={styles.button}>
+              <Button title="Sign up" onPress={() => navigation.navigate('Signup')}></Button>
+            </View>
         </View>
         </>
     );
@@ -67,10 +73,21 @@ const LoginForm = ({ setAuth, navigation }) => {
 
 const styles = StyleSheet.create({
     title: {
-        fontSize: 20
+      marginTop: 10,
+      marginBottom: 5,
+      fontSize: 20
     },
     header: {
         fontSize: 28,
+    },
+    inputText: {
+      borderColor: 'black',
+      borderRadius: 5,
+      borderWidth: 1
+    },
+    button: {
+      backgroundColor: 'red',
+      marginTop: 10,
     }
 })
 
