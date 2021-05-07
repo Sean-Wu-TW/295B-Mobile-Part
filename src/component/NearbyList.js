@@ -28,22 +28,22 @@ const NearbyList = ({auth}) => {
         if (friendId) {
             handleSubmit();
         }
-    })
+    }, [friendId])
 
     const saveUserLocation = async() => {
-        const hash = geofire.geohashForLocation([location.latitude, location.longitude]);
+        // const hash = geofire.geohashForLocation([location.latitude, location.longitude]);
         // for test
-        // const hash = geofire.geohashForLocation([37.423998333333335, -122.08300000000002]);
+        const hash = geofire.geohashForLocation([37.231998333333335, -122.23100000000002]);
         const users = await firestore()
             .collection('users')
             .doc(auth)
             .update({
             geohash: hash,
-            latitude: location.latitude,
-            longitude: location.longitude
+            // latitude: location.latitude,
+            // longitude: location.longitude
             //For test
-            // latitude: 37.423998333333335,
-            // longitude: -122.08300000000002
+            latitude: 37.231998333333335,
+            longitude: -122.23100000000002
             });
     }
 
@@ -73,7 +73,6 @@ const NearbyList = ({auth}) => {
         for (const doc of snap.docs) {
             const lat = doc.get('latitude');
             const lng = doc.get('longitude');
-
             // We have to filter out a few false positives due to GeoHash
             // accuracy, but most will match
             const distanceInKm = geofire.distanceBetween([lat, lng], center);
@@ -86,24 +85,36 @@ const NearbyList = ({auth}) => {
         return matchingDocs;
     }).then((matchingDocs) => {
         // reset markers
-        setMarkers([]);
+        // setMarkers([]);
+        const markersArray = [];
         matchingDocs.map((matchingDoc, index) => {
         if (matchingDoc['_data']['userid'] !== auth) {
-            setMarkers([...markers, 
-            {
-                latlng: {
-                latitude: matchingDoc['_data']['latitude'],
-                longitude: matchingDoc['_data']['longitude']
-                },
-                title: matchingDoc['_data']['name'],
-                userId: matchingDoc['_data']['userid']
-            }]
-            );
+            
+
+          markersArray.push({
+            latlng: {
+            latitude: matchingDoc['_data']['latitude'],
+            longitude: matchingDoc['_data']['longitude']
+            },
+            title: matchingDoc['_data']['name'],
+            userId: matchingDoc['_data']['userid']
+        });
+          // setMarkers([...markers, 
+          //   {
+          //       latlng: {
+          //       latitude: matchingDoc['_data']['latitude'],
+          //       longitude: matchingDoc['_data']['longitude']
+          //       },
+          //       title: matchingDoc['_data']['name'],
+          //       userId: matchingDoc['_data']['userid']
+          //   }]
+          //   );
         }
         });
         // Process the matching documents
         // ...
-    });
+        return markersArray;
+    }).then((markersArray)=>{setMarkers(markersArray)})
     }
 
     // get the current user's location
@@ -111,7 +122,9 @@ const NearbyList = ({auth}) => {
         navigator.geolocation.getCurrentPosition(
           position => {
             // const location = JSON.stringify(position);        
-            setLocation({latitude: position['coords']['latitude'], longitude: position['coords']['longitude']});
+            // setLocation({latitude: position['coords']['latitude'], longitude: position['coords']['longitude']});
+            // for test
+            setLocation({latitude: 37.231998333333335, longitude: -122.23100000000002});
           },
           error => Alert.alert(error.message),
           { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
@@ -129,7 +142,6 @@ const NearbyList = ({auth}) => {
     const handleSubmit = async (userid) => {
         try {
           // search users list for user & extract info...
-        //   console.log(friendId)
           const user = await firestore()
             .collection('users')
             .doc(friendId)
@@ -161,7 +173,6 @@ const NearbyList = ({auth}) => {
             .doc(auth)
             .get();
     
-            console.log('anything')
           // update my friend list
           await firestore()
             .doc(`users/${auth}`)
@@ -198,8 +209,6 @@ const NearbyList = ({auth}) => {
       const updateFriendId = (userId) => {
           setFriendId(userId)
       }
-        
-
 
     return (
         <>
@@ -272,7 +281,6 @@ const NearbyList = ({auth}) => {
             style={StyleSheet.absoluteFillObject}
             provider={MapView.PROVIDER_GOOGLE}
             showsUserLocation={true}
-            toolbarEnabled={true}
             zoomControlEnabled={true}
         >
         {   markers.map((marker, index) => (
