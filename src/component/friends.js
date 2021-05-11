@@ -19,47 +19,59 @@ const CURRENT_STATE_CHAT = 'chat';
 const CURRENT_STATE_GROUP_CHAT = 'group_chat';
 
 const Friends = ({navigation, auth}) => {
+    // group chat name
     const [groupName, onChangeGroupName] = React.useState("");
+    // friends list
     const [friends, setFriends] = useState([]);
+    // selected friend, used for rendering checkbox when select friends
     const [selectedFriends, setSelectedFriends] = useState([]);
+    // is creating group chat or not
     const [currentState, setCurrentState] = useState(CURRENT_STATE_CHAT);
+    // how many friends are select for group chat
     const [selectedCount, setSelectedCount] = useState(0);
+    const [currentUser, setCurrentUser] = useState({});
 
-    let currentUser;
-
+    // load all friends and update friends list
     const loadAllFriends = () => {
       firestore()
       .collection('users')
       .doc(auth)
       .onSnapshot(data => {
+        // once the data changed, get the latest friends list
         let user = data.data();
-        currentUser = user;
+        setCurrentUser(user);
+        console.log("Ccccccccc", currentUser);
         let newFriends = user.friends;
         if (newFriends == null || (friends.length == newFriends.length)) {
           return;
         }
         
+        // if the length is not same then replace the legacy list and render UI
         setFriends(newFriends);
+        // reset the selected array for group chat
         friends.forEach((friend, index) => {selectedFriends[index] = false});
         setSelectedFriends(selectedFriends);
       })
     }
 
-    const componentDidMount = loadAllFriends;
-
+    // helper function to do naviagate to chat box
     const navigateToChat = (userName, userId, chatId) => {
-      console.log("click friend", userName, userId, auth, chatId);
       navigation.navigate('ChatBox', {userName, userId, auth, chatId});
     }
     
+    // handle when friend list item is pressed
     const pressFriend = async (userName, userId, chatId, avatar, friendIndex) => {
+      // if in selecting group members state, then treat as the check box is clicked.
       if (currentState == CURRENT_STATE_GROUP_CHAT) {
+        select(friendIndex);
         return;
       }
+      // if current user has a chat session with the friend, go to that chat session directly.
       if (chatId) {
         navigateToChat(userName, userId, chatId);
       } else {
         const current = firestore.Timestamp.now();
+        //create a chat session first
         firestore()
         .collection("chatsV2").add({
           isGroupChat: false,
@@ -77,7 +89,7 @@ const Friends = ({navigation, auth}) => {
           messages: []
       }).then(chatRef => {
         let chatId = chatRef.id;
-        // update user's chat 
+        // update current user's chat list
         const userChatUpdatePromise = firestore().collection('users')
         .doc(auth)
         .update({
@@ -90,7 +102,7 @@ const Friends = ({navigation, auth}) => {
           console.log('what 1 ??????????????????????????????????', e);
           console.log(e.trace)
         });
-        // update friend's chat
+        // update friend's chat list
         const friendChatUpdatePromise = firestore().collection('users')
         .doc(userId)
         .update({
@@ -103,7 +115,7 @@ const Friends = ({navigation, auth}) => {
           console.log('what 2 ??????????????????????????????????', e);
           console.log(e.trace)
         });
-        // update current user-friend chat
+        // attach the chat session to the friend in the friends list of current user
         currentUser.friends[friendIndex].chatId = chatId;
         const currentUserFriendsPromise = firestore().collection('users').doc(auth).update({
           friends: currentUser.friends
@@ -112,7 +124,7 @@ const Friends = ({navigation, auth}) => {
           console.log(e.trace)
         });
 
-        // update current user-friend chat
+        // attach the chat session to the friend in the friends list of the friend
         let friendRef = firestore().collection('users').doc(userId);
         const friendPromise = friendRef.get().then(friendSnap => {
           let friendData = friendSnap.data();
@@ -136,6 +148,7 @@ const Friends = ({navigation, auth}) => {
 
     const pressStartGroupChat = () => {
       const current = firestore.Timestamp.now();
+      console.log("@@@@@@@@@", currentUser);
       const members = [
         {memberId: firestore().collection('users').doc(auth),
         name: currentUser.name,
@@ -181,13 +194,12 @@ const Friends = ({navigation, auth}) => {
         });
     }
 
-    const pressButton = (prevState) => {
-    }
-
+    // when the create group button is pressed
     const startSelection = () => {
       setCurrentState(CURRENT_STATE_GROUP_CHAT);
     }
 
+    // user stop creating the group chat, clear all the state.
     const cancleSelection = () => {
       setCurrentState(CURRENT_STATE_CHAT);
       let selected = [];
@@ -196,8 +208,8 @@ const Friends = ({navigation, auth}) => {
       setSelectedCount(0);
     }
 
+    // when the checkbox is clicked
     const select = (index) => {
-      console.log("before", index, selectedFriends[index]);
       let selected = [...selectedFriends];
       selected[index] = !selected[index];
       if (selected[index]) {
@@ -254,7 +266,7 @@ const Friends = ({navigation, auth}) => {
           /> : null}
           { currentState == CURRENT_STATE_CHAT ?
             <Button title='create group chat' onPress={startSelection} color="orange"></Button>
-            : <><Button title='start chat' disabled={selectedCount <= 1 && groupName.length > 0} onPress={pressStartGroupChat} color="green"></Button>
+            : <><Button title='start chat' disabled={selectedCount < 2 || groupName.length < 1} onPress={pressStartGroupChat} color="green"></Button>
               <Button title='cancel' onPress={cancleSelection}></Button></>
           }
         </>
