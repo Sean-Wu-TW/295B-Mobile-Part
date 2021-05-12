@@ -203,6 +203,7 @@ const ChatBox = ({ navigation, route}) => {
             .finally(() => {
               ucount -= 1;
               if (ucount == 1) {
+                // when all the chats are updated, render the latest message
                 setState({
                   messages: [msg, ...state.messages],
                 })
