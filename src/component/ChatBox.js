@@ -105,6 +105,7 @@ const ChatBox = ({ navigation, route}) => {
     return () => subscriber2();
     },[])
  
+  // deprecated
   const onSend = (msg = []) => {
     // update chat history of mine
     firestore()
@@ -148,6 +149,7 @@ const ChatBox = ({ navigation, route}) => {
     // TODO: update lastChat(timestamp) and lastChatContent
   }
 
+  // when send message button pressed
   const onSendV2 = (msg) => {
     let createdAt = firestore.Timestamp.fromDate(new Date())
     //first create message.
@@ -159,7 +161,7 @@ const ChatBox = ({ navigation, route}) => {
       text: msg.text,
       createdAt
     }).then(message => {
-      // save it into chats
+      // save it into chats of current user
       let chat = firestore().collection('chatsV2')
       .doc(chatId);
       return chat.update({
@@ -170,15 +172,15 @@ const ChatBox = ({ navigation, route}) => {
       });
     })
     .then(({chat, message}) => {
-      // update inbox
+      // update chats(inbox) of other users in the same chat session
       return chat.get().then(chatSnapshot => {
         let users = chatSnapshot.data().members;
         let ucount = users.length;
         users.forEach(u => {
-          console.log('updating inbox ', u.memberId.id, u);
           if (u.memberId.id != whoami) {
             u.memberId.get().then(userSnapshot => {
               let user = userSnapshot.data();
+              console.log("updating ~~~~~~~~~~~~~~~~~", user, user.chats);
               let chats2Update = user.chats;
               let find = 0;
               chats2Update.forEach(c => {
