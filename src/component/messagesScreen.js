@@ -35,6 +35,7 @@ const MessagesScreen = ({navigation, auth}) => {
   const [inbox, setInbox] = useState([]);
 
   console.log('this is', auth)
+  // deprecated
   const fetchUserInfo = async () => {
     firestore()
     .collection('users')
@@ -58,6 +59,8 @@ const MessagesScreen = ({navigation, auth}) => {
     })
   };
 
+
+  // when a chat list item is clicked, navigate to the chat chatbox screen
   function pressChat(userName, userId, auth, chatId) {
     chats.forEach(chat => {
       if (chat.chatId.id == chatId) {
@@ -72,6 +75,7 @@ const MessagesScreen = ({navigation, auth}) => {
 
   useEffect(() => {
     //fetchUserInfo();
+    // this function is used for fetching/updating user's chat list
     const fetchUserInfoV2 = 
       firestore()
       .collection('users')
@@ -86,6 +90,7 @@ const MessagesScreen = ({navigation, auth}) => {
         snapshot.data().chats.forEach(chat => {
           console.log('chat$$$$$$$$$$$$$$$$', chat);
           let chtRef = chat.chatId;
+          // load each chat detail information for current user
           chtRef.get().then(chatSnapshot => {
             let data = chatSnapshot.data();
             let chatItem = {
@@ -105,6 +110,7 @@ const MessagesScreen = ({navigation, auth}) => {
           }).finally(_ => {
             count -= 1;
             if (count <= 0) {
+              // when all the chats are loaded, render the UI
               setInbox(toAppend);
             }
           });
