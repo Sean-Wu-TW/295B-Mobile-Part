@@ -106,48 +106,48 @@ const ChatBox = ({ navigation, route}) => {
     },[])
  
   // deprecated
-  const onSend = (msg = []) => {
-    // update chat history of mine
-    firestore()
-    .collection('users')
-    .doc(whoami)
-    .collection('chat')
-    .doc(talkingTo)
-    .collection('messages')
-    .add({
-      text: msg[0].text,
-      createdAt: firestore.FieldValue.serverTimestamp(),
-      user: {
-        _id: whoami,
-        avatar: 'https://placeimg.com/140/140/any',
-        name: whoami
-      }
-    })
-    .catch(console.error);
+  // const onSend = (msg = []) => {
+  //   // update chat history of mine
+  //   firestore()
+  //   .collection('users')
+  //   .doc(whoami)
+  //   .collection('chat')
+  //   .doc(talkingTo)
+  //   .collection('messages')
+  //   .add({
+  //     text: msg[0].text,
+  //     createdAt: firestore.FieldValue.serverTimestamp(),
+  //     user: {
+  //       _id: whoami,
+  //       avatar: 'https://placeimg.com/140/140/any',
+  //       name: whoami
+  //     }
+  //   })
+  //   .catch(console.error);
 
-    // update chat history of other person
-    firestore()
-    .collection('users')
-    .doc(talkingTo)
-    .collection('chat')
-    .doc(whoami)
-    .collection('messages')
-    .add({
-      text: msg[0].text,
-      createdAt: firestore.FieldValue.serverTimestamp(),
-      user: {
-        _id: whoami,
-        avatar: 'https://placeimg.com/140/140/any',
-        name: whoami
-      }
-    })
-    .catch(console.error);
-    setState({
-        messages: [...msg, ...state.messages],
-      })
+  //   // update chat history of other person
+  //   firestore()
+  //   .collection('users')
+  //   .doc(talkingTo)
+  //   .collection('chat')
+  //   .doc(whoami)
+  //   .collection('messages')
+  //   .add({
+  //     text: msg[0].text,
+  //     createdAt: firestore.FieldValue.serverTimestamp(),
+  //     user: {
+  //       _id: whoami,
+  //       avatar: 'https://placeimg.com/140/140/any',
+  //       name: whoami
+  //     }
+  //   })
+  //   .catch(console.error);
+  //   setState({
+  //       messages: [...msg, ...state.messages],
+  //     })
 
-    // TODO: update lastChat(timestamp) and lastChatContent
-  }
+  //   // TODO: update lastChat(timestamp) and lastChatContent
+  // }
 
   // when send message button pressed
   const onSendV2 = (msg) => {
@@ -184,7 +184,7 @@ const ChatBox = ({ navigation, route}) => {
               let chats2Update = user.chats;
               let find = 0;
               chats2Update.forEach(c => {
-                if (c.chatId.id == chatId) {
+                if (c.chatId && c.chatId.id == chatId) {
                   find = 1;
                   if (c.lastFetch.seconds < createdAt.seconds) {
                     c.unread += 1;

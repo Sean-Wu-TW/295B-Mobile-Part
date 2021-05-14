@@ -61,7 +61,7 @@ const MessagesScreen = ({navigation, auth}) => {
 
 
   // when a chat list item is clicked, navigate to the chat chatbox screen
-  function pressChat(userName, userId, auth, chatId) {
+  function pressChat(userName, auth, chatId) {
     chats.forEach(chat => {
       if (chat.chatId.id == chatId) {
         chat.lastFetch = firebase.firestore.Timestamp.fromDate(new Date());
@@ -69,7 +69,7 @@ const MessagesScreen = ({navigation, auth}) => {
         }
       });
     firestore().collection('users').doc(auth).update({chats}).then(()=> {
-      navigation.navigate('ChatBox', {userName, userId, auth, chatId});
+      navigation.navigate('ChatBox', {userName, auth, chatId});
     });
   }
 
@@ -93,9 +93,9 @@ const MessagesScreen = ({navigation, auth}) => {
           // load each chat detail information for current user
           chtRef.get().then(chatSnapshot => {
             let data = chatSnapshot.data();
+            
             let chatItem = {
               id: chtRef.id,
-              userid: data.id,
               chatId: chtRef.id,
               userName: data.isGroupChat? data.name: data.members.find(member=> member.memberId.id != auth).name,
               messageTime: data.lastMessage?.toDate().toDateString(),
@@ -130,7 +130,7 @@ const MessagesScreen = ({navigation, auth}) => {
           renderItem={({item}) => (
            /* <Card onPress={() => navigation.navigate('Example', { userName: item.userName, userid: item.userid, auth: auth, chatId: item.chatId})}> */
             /*<Card onPress={() => navigation.navigate('Example', { userName: item.userName, userid: item.userid, auth: auth})}>*/
-            <Card onPress={() => pressChat(item.userName, item.userId, auth, item.chatId)}>
+            <Card onPress={() => pressChat(item.userName, auth, item.chatId)}>
               <UserInfo>
                 <UserImgWrapper>
                   <UserImg source={{uri: item.userImage}} />
