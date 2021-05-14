@@ -89,7 +89,6 @@ const NearbyList = ({auth}) => {
         const markersArray = [];
         matchingDocs.map((matchingDoc, index) => {
         if (matchingDoc['_data']['userid'] !== auth) {
-            
 
           markersArray.push({
             latlng: {
@@ -206,8 +205,22 @@ const NearbyList = ({auth}) => {
         }
       }
 
-      const updateFriendId = (userId) => {
-          setFriendId(userId)
+      const updateFriendId = async(userId) => {
+        const friendList = await firestore()
+        .collection('users')
+        .doc(auth)
+        .get();
+        // .get('friends');
+        let flag = true;
+        for (let i = 0; i < friendList['_data']['friends'].length; i++) {
+          if (userId === friendList['_data']['friends'][i]['userId']) {
+            flag = false;
+          }
+        }
+        console.log(flag);
+        if (flag) {
+          setFriendId(userId);
+        }
       }
 
     return (
